@@ -1,0 +1,195 @@
+{
+  "mesure_valide": false,
+  "avertissement": "backend dummy : pipeline validé, aucun chiffre de ce rapport n'est citable",
+  "generated_at": "2026-11-01T04:33:15.660007+00:00",
+  "backend": "dummy",
+  "inprocess": true,
+  "load_seconds": 0.0,
+  "corpus": "corpora\\demo",
+  "environment": {
+    "python": "3.14.7",
+    "implementation": "CPython",
+    "platform": "Windows-11-10.0.26100-SP0",
+    "machine": "AMD64",
+    "processor": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD",
+    "cpu_count": 6,
+    "harness_version": "0.1"
+  },
+  "model_files": [],
+  "normalization": {
+    "langue": "fr",
+    "module": "harness.metrics.normalize_fr",
+    "cer_espace_compte": false,
+    "wer_agrege": "total_errors/total_ref"
+  },
+  "agrégats": {
+    "utterances": 3,
+    "wer": 1.6875,
+    "cer": 1.451219512195122,
+    "substitutions": 16,
+    "deletions": 0,
+    "insertions": 11,
+    "audio_hours": 0.0004166666666666667,
+    "latency_ms": {
+      "n": 3,
+      "median": 0.003,
+      "p95": 0.003,
+      "max": 0.003
+    },
+    "rtf": 4.666666666666666e-06,
+    "peak_rss_bytes": 23175168,
+    "peak_rss_source": "PSAPI"
+  },
+  "par_domaine": {
+    "non-rens.": {
+      "utterances": 3,
+      "wer": 1.6875,
+      "cer": 1.451219512195122,
+      "substitutions": 16,
+      "deletions": 0,
+      "insertions": 11,
+      "audio_hours": 0.0004166666666666667,
+      "latency_ms": {
+        "n": 3,
+        "median": 0.003,
+        "p95": 0.003,
+        "max": 0.003
+      },
+      "rtf": 4.666666666666666e-06
+    }
+  },
+  "mesures_brutes": [
+    {
+      "utt_id": "u1",
+      "domaine": "non-rens.",
+      "micro": "non-rens.",
+      "bruit_db": "non-rens.",
+      "audio_duration_s": 0.5,
+      "latency_ms": null,
+      "warmup_excluded": true,
+      "reference": "bonjour le monde",
+      "hypothesis": "phrase de validation du pipeline, sans rapport avec l'audio",
+      "wer": {
+        "metric": "WER",
+        "level": "w",
+        "reference_length": 3,
+        "hypothesis_length": 9,
+        "substitutions": 3,
+        "deletions": 0,
+        "insertions": 6,
+        "errors": 9,
+        "rate": 3.0
+      },
+      "cer": {
+        "metric": "CER",
+        "level": "c",
+        "reference_length": 14,
+        "hypothesis_length": 50,
+        "substitutions": 8,
+        "deletions": 0,
+        "insertions": 36,
+        "errors": 44,
+        "rate": 3.142857142857143
+      }
+    },
+    {
+      "utt_id": "u2",
+      "domaine": "non-rens.",
+      "micro": "non-rens.",
+      "bruit_db": "non-rens.",
+      "audio_duration_s": 0.5,
+      "latency_ms": 0.003,
+      "warmup_excluded": false,
+      "reference": "l'homme marche dans la rue",
+      "hypothesis": "phrase de validation du pipeline, sans rapport avec l'audio",
+      "wer": {
+        "metric": "WER",
+        "level": "w",
+        "reference_length": 5,
+        "hypothesis_length": 9,
+        "substitutions": 5,
+        "deletions": 0,
+        "insertions": 4,
+        "errors": 9,
+        "rate": 1.8
+      },
+      "cer": {
+        "metric": "CER",
+        "level": "c",
+        "reference_length": 22,
+        "hypothesis_length": 50,
+        "substitutions": 13,
+        "deletions": 0,
+        "insertions": 28,
+        "errors": 41,
+        "rate": 1.8636363636363635
+      }
+    },
+    {
+      "utt_id": "u3",
+      "domaine": "non-rens.",
+      "micro": "non-rens.",
+      "bruit_db": "non-rens.",
+      "audio_duration_s": 0.5,
+      "latency_ms": 0.001,
+      "warmup_excluded": false,
+      "reference": "est-ce que la transcription fonctionne",
+      "hypothesis": "phrase de validation du pipeline, sans rapport avec l'audio",
+      "wer": {
+        "metric": "WER",
+        "level": "w",
+        "reference_length": 5,
+        "hypothesis_length": 9,
+        "substitutions": 5,
+        "deletions": 0,
+        "insertions": 4,
+        "errors": 9,
+        "rate": 1.8
+      },
+      "cer": {
+        "metric": "CER",
+        "level": "c",
+        "reference_length": 34,
+        "hypothesis_length": 50,
+        "substitutions": 23,
+        "deletions": 0,
+        "insertions": 16,
+        "errors": 39,
+        "rate": 1.1470588235294117
+      }
+    },
+    {
+      "utt_id": "u4",
+      "domaine": "non-rens.",
+      "micro": "non-rens.",
+      "bruit_db": "non-rens.",
+      "audio_duration_s": 0.5,
+      "latency_ms": 0.003,
+      "warmup_excluded": false,
+      "reference": "deux trois quatre cinq six sept",
+      "hypothesis": "phrase de validation du pipeline, sans rapport avec l'audio",
+      "wer": {
+        "metric": "WER",
+        "level": "w",
+        "reference_length": 6,
+        "hypothesis_length": 9,
+        "substitutions": 6,
+        "deletions": 0,
+        "insertions": 3,
+        "errors": 9,
+        "rate": 1.5
+      },
+      "cer": {
+        "metric": "CER",
+        "level": "c",
+        "reference_length": 26,
+        "hypothesis_length": 50,
+        "substitutions": 13,
+        "deletions": 1,
+        "insertions": 25,
+        "errors": 39,
+        "rate": 1.5
+      }
+    }
+  ]
+}

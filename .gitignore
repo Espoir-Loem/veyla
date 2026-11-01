@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.claude/
+eval/corpora/*
+!eval/corpora/demo/
+!eval/corpora/demo/**
+.qoder/settings.local.json
