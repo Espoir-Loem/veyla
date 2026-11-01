@@ -9,7 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
-__all__ = ["Backend", "DummyBackend", "REGISTRY", "build_backend"]
+from .backends_vosk import VoskBackend
+
+__all__ = ["Backend", "DummyBackend", "VoskBackend", "REGISTRY", "build_backend"]
 
 
 @runtime_checkable
@@ -49,7 +51,9 @@ class DummyBackend:
         return self.PHRASE
 
 
-REGISTRY: dict[str, type] = {"dummy": DummyBackend}
+# Le module vosk lui-même n'est importé que dans load() : le harnais reste exécutable
+# sans rien installer, et --backend montre ce qui est branchable.
+REGISTRY: dict[str, type] = {"dummy": DummyBackend, VoskBackend.name: VoskBackend}
 
 
 def build_backend(name: str, model_dir: Path | None = None) -> Backend:

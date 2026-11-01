@@ -1,7 +1,7 @@
 # Silure — Document de marque
 
-Version 0.1 · statut : proposition interne · date : 2026-11-01
-Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'est publiée avant d'avoir été mesurée.
+Version 0.2 · statut : hypothèses en cours de mesure · première campagne : `eval/reports/2026-11-01-vosk-smoke.md`
+Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'est publiée avant d'avoir été mesurée sur un jeu de `eval/CORPUS.md`, jamais sur un corpus de validation.
 
 ---
 
@@ -118,9 +118,15 @@ Voir §8. Non négociable, non configurable par le client.
 ## 6. Preuve : le protocole, pas le slogan
 
 Le harnais existe : `eval/harness/` (stdlib Python seul, 22 tests, rapport JSON +
-vue markdown). Le protocole de corpus est écrit dans `eval/CORPUS.md`. **Aucun
-chiffre n'existe encore** : il faut un backend de modèle réel pour que la machine
-produise autre chose qu'une validation de pipeline.
+vue markdown). Le protocole de corpus est écrit dans `eval/CORPUS.md`. Un backend
+de modèle réel tourne : Vosk `small-fr`, 65 MiB, sans compte ni clé. La première
+campagne est dans `eval/reports/`.
+
+Elle ne produit **aucun chiffre de qualité citable** : elle a tourné sur douze
+énoncés lus par une voix de synthèse. Elle produit en revanche trois faits qui
+comptent : le modèle tient dans la taille annoncée, l'inférence n'ouvre aucune
+connexion, et le facteur de latence annoncé par le white paper était faux d'un
+ordre de grandeur (1 777 ms mesurés, pas 10 ms).
 
 **STT**
 - WER et CER sur les jeux de `eval/CORPUS.md` : général, conversationnel, médical,
@@ -299,6 +305,12 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
    | pic mémoire, Android milieu de gamme (4 Go) | ≤ **1,2 Go** | au-dessus, le modèle ne cohabite plus avec l'application hôte |
    | RTF, même cible | ≤ **0,5** | une marge de deux est nécessaire avant que la limitation thermique ne rende la promesse fausse en usage réel |
 
+   Premier signal contraire : le RTF mesuré est de **0,60 sur un desktop 6 cœurs**
+   (`eval/reports/2026-11-01-vosk-smoke.md`). Le plancher de 0,5 sur mobile ne sera
+   pas tenu par ce modèle sans travail réel. Ce n'est pas une raison d'abandonner,
+   c'est la première décision que la machine de mesure impose : avant de promettre
+   « ça tourne sur ton téléphone », on mesure sur un téléphone.
+
    Un seul de ces quatre planchers non atteint sur la cible mobile annule le
    positionnement : nous serions une bibliothèque de desktop, ce qui est un autre
    produit, avec un autre marché et une autre marque.
@@ -319,13 +331,13 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 | Périmètre v1 | tranché : **STT seule**, aucune génération |
 | Seuils d'acceptation | fixés : table du §13.1 |
 | Cinq refus d'utilisation | écrits : §8.1 |
-| **Backend d'un modèle réel** | **à faire — c'est ce qui bloque tout chiffre** |
-| Jeux FLEURS et Common Voice téléchargés, empreinte consignée | à faire |
+| Backend d'un modèle réel | fait : `vosk-small-fr`, branché dans `harness.backends_vosk` |
+| Jeux FLEURS et Common Voice téléchargés, empreinte consignée | à faire — c'est ce qui bloque le premier chiffre de qualité citable |
 | Corpus médical et juridique sous accord de licence | à négocier |
 | Mesures sur les quatre appareils de référence, puis suppression des `[à mesurer]` du présent document | après le backend |
-| Capture réseau publiée sur une build utilisable | après la première build |
+| Capture réseau | premier niveau : sonde `netstat` par processus, 0 connexion établie. Ne voit pas une connexion courte entre deux sondes, ni UDP ni DNS — l'audit promis au §6 reste à faire |
 | Recherche d'antériorité INPI / EUIPO, classes 9 et 42 | avant tout engagement de design |
 
-Tant que la ligne « backend d'un modèle réel » n'est pas passée, ce document ne contient
-aucun résultat. C'est volontaire : un chiffre inventé aujourd'hui serait le seul que le
-marché retiendrait de nous.
+Ce document ne contient toujours **aucun chiffre de qualité citable**, et c'est voulu :
+le seul corpus qui tourne est un corpus de validation. La ligne qui bloque est
+désormais le téléchargement des jeux de test, plus le backend.

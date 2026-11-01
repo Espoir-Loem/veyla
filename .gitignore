@@ -5,3 +5,8 @@ eval/corpora/*
 !eval/corpora/demo/
 !eval/corpora/demo/**
 .qoder/settings.local.json
+.venv/
+models/
+!eval/corpora/synth-fr/
+!eval/corpora/synth-fr/**
+eval/corpora/synth-fr/tts.ps1
