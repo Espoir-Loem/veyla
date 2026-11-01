@@ -50,13 +50,14 @@ de se justifier toute seule, en douze lignes.
 
 ## Reproductibilité immédiate
 
-Trois exécutions le même jour, même machine, même corpus :
+Quatre exécutions le même jour, même machine, même corpus :
 
 | exécution | WER | latence médiane | p95 | RTF |
 |---|---|---|---|---|
 | 1 | 10,17 % | 1 777 ms | 2 091 ms | 0,60 |
 | 2 | 10,17 % | 1 740 ms | 2 311 ms | 0,63 |
 | 3 | 10,17 % | 2 212 ms | 4 039 ms | 0,82 |
+| 4 | 10,17 % | 2 118 ms | 3 085 ms | 0,78 |
 
 Le taux se reproduit **au caractère près** : la transcription est déterministe, un WER
 publié n'a pas besoin d'être réitéré. Le temps, lui, varie de **37 % entre la meilleure
