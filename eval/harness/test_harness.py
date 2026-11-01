@@ -16,6 +16,57 @@ import wave
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from harness import metrics, probes, runner  # noqa: E402
+from harness import backends as backends_module  # noqa: E402
+
+
+class TestDecouverteDesBackends(unittest.TestCase):
+    """La boucle qui enregistre les fichiers `backends_*.py` sans édition de REGISTRY."""
+
+    def test_le_module_vosk_est_decouvert_non_declare(self):
+        # Rien ne référence VoskBackend dans backends.py : seul le fichier le fait exister.
+        self.assertIn("dummy", backends_module.REGISTRY)
+        self.assertIn("vosk-small-fr", backends_module.REGISTRY)
+        self.assertEqual(backends_module.REGISTRY["vosk-small-fr"].__module__, "backends_vosk")
+
+    def test_un_module_casse_ne_casse_pas_le_paquet(self):
+        before = set(backends_module.IMPORT_ERRORS)
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "backends_casse.py").write_text("raise RuntimeError('dépendance absente')\n",
+                                                         encoding="utf-8")
+            backends_module.discover(Path(tmp))
+        nouveaux = set(backends_module.IMPORT_ERRORS) - before
+        self.assertIn("backends_casse", nouveaux)
+        self.assertIn("dépendance absente", backends_module.IMPORT_ERRORS["backends_casse"])
+
+    def test_un_fichier_de_backend_se_enregistre_seul(self):
+        source = (
+            "class Extra:\n"
+            "    name = 'extra-test'\n"
+            "    inprocess = False\n"
+            "    model_files = []\n"
+            "    def __init__(self, model_dir=None): pass\n"
+            "    def load(self): pass\n"
+            "    def transcribe(self, audio): return ''\n"
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "backends_extra.py").write_text(source, encoding="utf-8")
+            backends_module.discover(Path(tmp))
+        self.assertIn("extra-test", backends_module.REGISTRY)
+        backends_module.REGISTRY.pop("extra-test", None)
+
+    def test_l_erreur_nomme_ce_qui_est_non_chargable(self):
+        before = set(backends_module.IMPORT_ERRORS)
+        backends_module.IMPORT_ERRORS["backends_fantome"] = "ImportError: module absent"
+        try:
+            backends_module.build_backend("inexistant")
+            self.fail("build_backend aurait dû refuser")
+        except SystemExit as exc:
+            self.assertIn("non chargables", str(exc))
+            self.assertIn("backends_fantome", str(exc))
+        finally:
+            backends_module.IMPORT_ERRORS.pop("backends_fantome", None)
+            self.assertTrue(set(backends_module.IMPORT_ERRORS) <= before)
+
 
 
 class TestNormalisation(unittest.TestCase):

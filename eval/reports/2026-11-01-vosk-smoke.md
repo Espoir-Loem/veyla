@@ -12,7 +12,7 @@ Manifeste complet : [`synth-fr-vosk.json`](./synth-fr-vosk.json)
 | CER | 4,94 % |
 | latence médiane | 1 777 ms |
 | latence p95 | 2 091 ms |
-| RTF | 0,60 |
+| RTF | 0,60 (jusqu'à 0,82 sur trois exécutions) |
 | pic mémoire | 185 MiB |
 | chargement du modèle | 0,90 s |
 | poids empreints | 38,2 MiB (final.mdl 15,2 + Gr.fst 22,9), 65 MiB dépaqué |
@@ -50,11 +50,29 @@ de se justifier toute seule, en douze lignes.
 
 ## Reproductibilité immédiate
 
-Deuxième exécution le même jour sur la même machine : WER inchangé à 10,17 % (le taux
-est déterministe), RTF passé de 0,60 à 0,63, latence médiane de 1 777 à 1 740 ms, p95 de
-2 091 à 2 311 ms. Un taux se reproduit au caractère près, un temps ne se reproduit pas à
-moins de 5 %. Le plancher RTF du §13 ne se joue donc pas sur une campagne mais sur une
-série, et le harnais ne calcule pas encore d'intervalle entre exécutions.
+Trois exécutions le même jour, même machine, même corpus :
+
+| exécution | WER | latence médiane | p95 | RTF |
+|---|---|---|---|---|
+| 1 | 10,17 % | 1 777 ms | 2 091 ms | 0,60 |
+| 2 | 10,17 % | 1 740 ms | 2 311 ms | 0,63 |
+| 3 | 10,17 % | 2 212 ms | 4 039 ms | 0,82 |
+
+Le taux se reproduit **au caractère près** : la transcription est déterministe, un WER
+publié n'a pas besoin d'être réitéré. Le temps, lui, varie de **37 % entre la meilleure
+et la pire campagne** (0,60 à 0,82 de RTF), sans que rien dans la configuration n'ait
+changé.
+
+Deux conséquences, dont une correction de ce document :
+
+1. Le plancher RTF de 0,5 fixé au §13 de `docs/brand.md` n'est pas approché par ce
+   modèle **sur un desktop** : il est dépassé de 64 % à la troisième exécution (0,82 mesurés pour 0,50 exigés). La
+   cible mobile est plus éloignée encore, pas moins.
+2. Le harnais agrège une campagne, pas plusieurs. Il ne calcule ni intervalle ni
+   dispersion entre exécutions, et le markdown ne dit pas combien de campagnes ont
+   produit le chiffre. C'est un trou réel : sur cet unique indicateur non déterministe,
+   un rapport seul peut être cité hors de sa variance. À boucher avant toute publication
+   de latence.
 
 ## Détail des erreurs restantes
 

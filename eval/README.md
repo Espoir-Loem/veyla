@@ -50,6 +50,13 @@ Trois dispositions existent pour qu'un rapport ne puisse pas être cité à tort
 3. **Pas de durée devinée.** Seuls les WAV PCM ont une durée lisible ici. Un autre
    conteneur donne `audio_duration_s: null` et le RTF est abstenu.
 
+**Limite connue, et réelle.** Une campagne produit un chiffre de latence ; rien n'agrège
+les campagnes entre elles, et le markdown ne dit pas combien de campagnes ont produit
+le nombre affiché. Sur un modèle où le taux est déterministe mais le temps non — Vosk
+`small-fr` : WER identique à trois reprises, RTF de 0,60 à 0,82 — publier une latence
+sans dispersion, c'est publier le meilleur jour de la machine. À boucher avant toute
+citation de temps.
+
 ## Normalisation — et ce qu'elle écrase
 
 `harness.metrics.normalize_fr` : NFKC, minuscules, apostrophes typographiques unifiées,
@@ -85,9 +92,17 @@ sont enregistrés dans chaque manifeste pour que ce soit détectable.
 
 ## Ajouter un backend
 
-Une classe respectant `harness.backends.Backend` (`name`, `inprocess`, `model_files`,
-`load()`, `transcribe(path) -> str`), plus une entrée dans `REGISTRY`. Le harnais ne
-doit connaître ni ONNX, ni Whisper, ni aucun format de poids.
+Un fichier `harness/backends_<nom>.py` exposant une classe avec `name`, `inprocess`,
+`model_files`, `load()` et `transcribe(path) -> str`. **Rien à éditer ailleurs** : le
+paquet découvre les modules `backends_*` à l'import et les enregistre dans `REGISTRY`.
+Le harnais ne doit connaître ni ONNX, ni Whisper, ni aucun format de poids.
+
+La découverte est tolérante par nécessité : `backends_vosk.py` s'importe avec la seule
+bibliothèque standard et ne réclame `vosk` que dans `load()`. Un module dont la
+dépendance manque est donc chargeable, visible dans `--backend`, et son échec porte
+l'installation à demander. Un module qui casse à l'import, lui, est consigné dans
+`IMPORT_ERRORS` et nommé dans le message d'erreur d'un `--backend` inconnu — il ne
+supprime pas silencieusement le reste du registre.
 
 `model_files` alimente le manifeste : empreinte SHA256 et taille de chaque fichier de
 poids. Sans ça, un rapport ne dit pas *quel* modèle a tourné, et il n'est

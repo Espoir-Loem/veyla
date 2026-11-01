@@ -305,9 +305,11 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
    | pic mémoire, Android milieu de gamme (4 Go) | ≤ **1,2 Go** | au-dessus, le modèle ne cohabite plus avec l'application hôte |
    | RTF, même cible | ≤ **0,5** | une marge de deux est nécessaire avant que la limitation thermique ne rende la promesse fausse en usage réel |
 
-   Premier signal contraire : le RTF mesuré est de **0,60 sur un desktop 6 cœurs**
-   (`eval/reports/2026-11-01-vosk-smoke.md`). Le plancher de 0,5 sur mobile ne sera
-   pas tenu par ce modèle sans travail réel. Ce n'est pas une raison d'abandonner,
+   Premier signal contraire : le RTF mesuré sur un desktop 6 cœurs va de **0,60 à
+   0,82 selon la campagne** (`eval/reports/2026-11-01-vosk-smoke.md`). Le plancher
+   de 0,5 sur mobile n'est pas approché par ce modèle, il est dépassé de 64 % à la troisième
+   campagne (0,82 mesurés pour 0,50 exigés), sur la machine la plus favorable du
+   plateau. Ce n'est pas une raison d'abandonner,
    c'est la première décision que la machine de mesure impose : avant de promettre
    « ça tourne sur ton téléphone », on mesure sur un téléphone.
 

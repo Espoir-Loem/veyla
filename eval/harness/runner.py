@@ -233,7 +233,9 @@ def _mb(value):
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Campagne de mesure STT reproductible.")
     parser.add_argument("--corpus", type=Path, required=True)
-    parser.add_argument("--backend", default="dummy", choices=sorted(REGISTRY))
+    # Pas de choices=ici : un nom invalide doit passer par build_backend, qui nomme
+    # les modules non chargeables et leur raison. argparse les cacherait.
+    parser.add_argument("--backend", default="dummy")
     parser.add_argument("--model-dir", type=Path, default=None)
     parser.add_argument("--warmups", type=int, default=3)
     parser.add_argument("--limit", type=int, default=None)
