@@ -10,3 +10,10 @@ models/
 !eval/corpora/synth-fr/
 !eval/corpora/synth-fr/**
 eval/corpora/synth-fr/tts.ps1
+# Le corpus FLEURS est reconstituible depuis son commit : seules la trace et la
+# consigne de licence ont leur place dans le depot, pas 100 Mo d'audio.
+# Le motif doit viser les WAV, pas `*` : une regle plus bas dans le fichier
+# l'emporte, et `*` re-ignorait le manifeste et la provenance.
+!eval/corpora/fleurs-fr-test/
+eval/corpora/fleurs-fr-test/*.wav
+.cache/

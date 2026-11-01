@@ -50,12 +50,15 @@ Trois dispositions existent pour qu'un rapport ne puisse pas être cité à tort
 3. **Pas de durée devinée.** Seuls les WAV PCM ont une durée lisible ici. Un autre
    conteneur donne `audio_duration_s: null` et le RTF est abstenu.
 
-**Limite connue, et réelle.** Une campagne produit un chiffre de latence ; rien n'agrège
-les campagnes entre elles, et le markdown ne dit pas combien de campagnes ont produit
-le nombre affiché. Sur un modèle où le taux est déterministe mais le temps non — Vosk
-`small-fr` : WER identique à trois reprises, RTF de 0,60 à 0,82 — publier une latence
-sans dispersion, c'est publier le meilleur jour de la machine. À boucher avant toute
-citation de temps.
+**Limite connue, et réelle.** Une campagne produit un chiffre de latence ; le temps
+varie d'une exécution à l'autre alors que le taux, lui, est déterministe. Sur `synth-fr`
+(31,8 s de voix de synthèse, énoncés de 2,9 s) : WER identique à quatre reprises, RTF de
+0,60 à 0,82. Sur `fleurs-fr-test` (1 031,8 s de parole humaine, énoncés de 10,6 s) : RTF
+de 0,44 à 0,65, parce que le coût fixe par énoncé s'amortit sur des segments plus longs.
+Publier une latence sans dispersion, c'est publier le meilleur jour de la machine.
+`harness.repeat` (cf. § Campagnes répétées) existe pour ça : un nombre de temps n'a de
+sens qu'avec le compte des campagnes qui l'ont produit — et qu'avec la longueur des
+segments qui l'ont produit.
 
 ## Normalisation — et ce qu'elle écrase
 
@@ -77,18 +80,60 @@ le mot exact a une valeur medicale ou juridique, le taux publié doit être acco
 d'une **classification des erreurs** (substitution de sens vs erreur d'audition), pas
 d'une seule ligne de pourcentage.
 
-La normalisation fait partie du chiffre. Modifier `normalize_fr` casse la
-comparabilité avec les rapports antérieurs : le nom du module et la convention CER
-sont enregistrés dans chaque manifeste pour que ce soit détectable.
+Cette classification n'est pas une précaution théorique : mesurée sur le premier corpus
+de parole humaine (`fleurs-fr-test`, 97 énoncés, Vosk `small-fr`), les 24 énoncés dont
+la référence écrit un nombre en chiffres — un quart du corpus et 24,8 % des mots —
+portent **38 % de la masse d'erreur**. WER 33,01 % sur ces énoncés, 17,78 % sur les
+autres. La cause tient en une ligne : le modèle dit « mille neuf cent soixante-six »,
+la référence écrit `1966`, et la normalisation ne réconcilie pas les deux. Le 21,56 %
+publié pour l'ensemble est donc à la fois le bon chiffre et un mauvais résumé.
+
+La normalisation fait partie du chiffre. `metrics.empreinte_normalisation()` condense
+les quatre jeux de caractères consommés par `normalize_fr` et le manifeste l'enregistre
+sous `normalization.empreinte` : deux rapports d'empreintes différentes ne sont pas
+comparables, et cela se lit sans relire le code. Un point oublié dans le jeu de
+ponctuation a fait 3,35 points de WER sur un corpus réel avant que ce mécanisme
+n'existe ([rapport](reports/2026-11-01-normalisation-point-oublie.md)).
 
 ## Formats de corpus acceptés
 
-- `manifest.tsv` — en-tête obligatoire, colonnes reconnues :
-  `utt_id`, `audio`, `transcript`, `domaine`, `micro`, `bruit_db`. Une colonne
-  inconnue fait échouer la campagne : un champ non reconnu est un champ qui ne sera
-  pas rapporté, donc une condition de test silencieusement perdue.
+- `manifest.tsv` — en-tête obligatoire. Colonnes de base : `utt_id`, `audio`,
+  `transcript`. Toute autre colonne est un **axe** et doit être déclarée :
+  `--axes domaine,genre,locuteur`. Une colonne non déclarée fait échouer la campagne —
+  un champ reconnu mais non déclaré est une condition de test qui serait perdue en
+  silence — et le message d'erreur propose la liste `--axes` qui l'accepterait.
+  Un axe déclaré qui n'est pas dans le manifeste échoue aussi, et une ligne dont le
+  nombre de champs ne correspond pas à l'en-tête échoue : une tabulation avalée par une
+  transcription décalerait tout le reste sans aucun message.
 - mode sans manifeste — `x.wav` avec `x.txt` à côté ; une référence manquante arrête
-  tout plutôt que d'écarter des énoncés en silence.
+  tout plutôt que d'écarter des énoncés en silence. Les axes existent alors, mais
+  valent tous `non-rens.` : un rapport sans métadonnée doit le dire, pas l'inventer.
+
+Un axe qui ne prend qu'une valeur sur tout le corpus ne produit pas de tableau :
+`par_axe` l'omet plutôt que de répéter le chiffre global sous un nom de colonne.
+
+## Campagnes répétées
+
+Une campagne = un processus. `harness.repeat` en relance K dans des exécutables
+distincts — sinon la deuxième campagne hériterait du modèle déjà résident de la
+première et publierait un pic mémoire faux — et rend deux choses séparées :
+
+- **accord des taux** entre campagnes : le modèle est-il déterministe ici ;
+- **dispersion des temps** entre campagnes : la machine est-elle mesurable.
+
+S'y ajoute un **intervalle de confiance à 95 %** obtenu en réechantillonnant les énoncés
+avec remise (graine consignée, réechantillonnages consignés) : la variation due à la
+taille de l'échantillon, pas à l'ordonnanceur. Le titre du rapport énonce le nombre de
+campagnes qui l'ont produit.
+
+```bash
+cd eval && python -m harness.repeat --corpus corpora/fleurs-fr-test --backend vosk-small-fr \
+  --model-dir ../models/vosk-model-small-fr-0.22 --campagnes 3 --json reports/agregat.json
+```
+
+Premier agrégat publié : trois campagnes sur `fleurs-fr-test`, WER 21,56 % et CER 10,57 %
+identiques au chiffre près, RTF de 0,44 à 0,65 (46 % d'étendue), intervalle à 95 % du WER
+[19,15 ; 24,17]. [Rapport](reports/2026-11-01-fleurs100-vosk.md).
 
 ## Ajouter un backend
 

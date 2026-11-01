@@ -1,6 +1,6 @@
 # Silure — Document de marque
 
-Version 0.2 · statut : hypothèses en cours de mesure · première campagne : `eval/reports/2026-11-01-vosk-smoke.md`
+Version 0.3 · statut : premier chiffre public mesuré, non comparé à une baseline cloud · campagne : `eval/reports/2026-11-01-fleurs100-vosk.md`
 Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'est publiée avant d'avoir été mesurée sur un jeu de `eval/CORPUS.md`, jamais sur un corpus de validation.
 
 ---
@@ -117,16 +117,23 @@ Voir §8. Non négociable, non configurable par le client.
 
 ## 6. Preuve : le protocole, pas le slogan
 
-Le harnais existe : `eval/harness/` (stdlib Python seul, 22 tests, rapport JSON +
-vue markdown). Le protocole de corpus est écrit dans `eval/CORPUS.md`. Un backend
-de modèle réel tourne : Vosk `small-fr`, 65 MiB, sans compte ni clé. La première
-campagne est dans `eval/reports/`.
+Le harnais existe : `eval/harness/` (stdlib Python seul, 45 tests, rapport JSON + vue
+markdown). Le protocole de corpus est écrit dans `eval/CORPUS.md`. Un backend de modèle
+réel tourne : Vosk `small-fr`, 65 MiB dépaqué, sans compte ni clé.
 
-Elle ne produit **aucun chiffre de qualité citable** : elle a tourné sur douze
-énoncés lus par une voix de synthèse. Elle produit en revanche trois faits qui
-comptent : le modèle tient dans la taille annoncée, l'inférence n'ouvre aucune
-connexion, et le facteur de latence annoncé par le white paper était faux d'un
-ordre de grandeur (1 777 ms mesurés, pas 10 ms).
+**Le premier chiffre citable existe depuis le 2026-11-01**, sur la seule parole humaine
+du dépôt : **WER 21,56 %** (intervalle à 95 % [19,15 ; 24,17]) et **CER 10,57 %** sur
+97 énoncés de `fleurs-fr-test` — 0,287 h, 2 477 mots de référence, trois campagnes,
+empreinte de normalisation `1ad9ce8f9ca241ce`. Il ne compare rien : la baseline cloud
+sur le même audio n'existe pas encore, et le corpus est la tête d'archive d'un split de
+lecture, pas un échantillon aléatoire. Le rapport
+`eval/reports/2026-11-01-fleurs100-vosk.md` énumère ce que le chiffre autorise et ce
+qu'il n'autorise pas.
+
+Les campagnes antérieures sur voix de synthèse ne produisent aucun chiffre citable. Elles
+ont établi trois faits qui comptent : le modèle tient dans la taille annoncée, l'inférence
+n'ouvre aucune connexion (sonde `netstat` de premier niveau), et la latence annoncée par
+le white paper était fausse d'un ordre de grandeur (1 777 ms médians, pas 10 ms).
 
 **STT**
 - WER et CER sur les jeux de `eval/CORPUS.md` : général, conversationnel, médical,
@@ -305,13 +312,16 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
    | pic mémoire, Android milieu de gamme (4 Go) | ≤ **1,2 Go** | au-dessus, le modèle ne cohabite plus avec l'application hôte |
    | RTF, même cible | ≤ **0,5** | une marge de deux est nécessaire avant que la limitation thermique ne rende la promesse fausse en usage réel |
 
-   Premier signal contraire : le RTF mesuré sur un desktop 6 cœurs va de **0,60 à
-   0,82 selon la campagne** (`eval/reports/2026-11-01-vosk-smoke.md`). Le plancher
-   de 0,5 sur mobile n'est pas approché par ce modèle, il est dépassé de 64 % à la troisième
-   campagne (0,82 mesurés pour 0,50 exigés), sur la machine la plus favorable du
-   plateau. Ce n'est pas une raison d'abandonner,
-   c'est la première décision que la machine de mesure impose : avant de promettre
-   « ça tourne sur ton téléphone », on mesure sur un téléphone.
+   Premier signal contraire, et sa correction. Le RTF mesuré sur les douze énoncés de
+   synthèse allait de **0,60 à 0,82** ; on en avait conclu que le plancher de 0,5 était
+   dépassé de 64 % sur desktop (`eval/reports/2026-11-01-vosk-smoke.md`). La campagne
+   FLEURS, sur 1 031,8 s de parole humaine, donne **0,44 à 0,65 selon la campagne**
+   (médiane 0,50, `eval/reports/2026-11-01-fleurs100-vosk.md`). Les deux mesures sont
+   justes et ne disent pas la même chose : sur des énoncés de 2,9 s, le coût fixe par
+   énoncé pèse dans le RTF ; sur 10,6 s, il s'amortit. Le plancher desktop est donc
+   atteint par une campagne sur trois, manqué de 30 % par la plus lente — et la cible
+   mobile reste **non mesurée**. C'est cette dernière mesure, pas le chiffre desktop,
+   qui décide si « ça tourne sur ton téléphone » est une phrase publiable.
 
    Un seul de ces quatre planchers non atteint sur la cible mobile annule le
    positionnement : nous serions une bibliothèque de desktop, ce qui est un autre
@@ -327,19 +337,23 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 
 | Élément | Statut |
 |---|---|
-| Harnais de mesure — stdlib, 22 tests, manifeste SHA256 | fait : `eval/harness/` |
+| Harnais de mesure — stdlib, 45 tests, manifeste SHA256 | fait : `eval/harness/` |
 | Protocole de corpus — jeux, conditions, règles d'exclusion | fait : `eval/CORPUS.md` |
 | Nom | tranché : **Silure**, sous réserve d'antériorité |
 | Périmètre v1 | tranché : **STT seule**, aucune génération |
 | Seuils d'acceptation | fixés : table du §13.1 |
 | Cinq refus d'utilisation | écrits : §8.1 |
 | Backend d'un modèle réel | fait : `vosk-small-fr`, branché dans `harness.backends_vosk` |
-| Jeux FLEURS et Common Voice téléchargés, empreinte consignée | à faire — c'est ce qui bloque le premier chiffre de qualité citable |
+| Corpus FLEURS fr | fait : 100 énoncés, manifeste et provenance au dépôt, audio reconstituable par `eval/tools/prepare_fleurs.py` |
+| Premier chiffre citable | fait : WER 21,56 % [19,15 ; 24,17] sur 97 énoncés, 3 campagnes — `eval/reports/2026-11-01-fleurs100-vosk.md` |
+| Baseline cloud sur le même audio | absente — bloque toute comparaison aux seuils du §13.1 |
+| Common Voice fr, corpus spontané | à télécharger ou à négocier |
 | Corpus médical et juridique sous accord de licence | à négocier |
-| Mesures sur les quatre appareils de référence, puis suppression des `[à mesurer]` du présent document | après le backend |
+| Mesures sur les quatre appareils de référence, puis suppression des `[à mesurer]` du présent document | après la baseline ; la cible mobile décide du positionnement |
 | Capture réseau | premier niveau : sonde `netstat` par processus, 0 connexion établie. Ne voit pas une connexion courte entre deux sondes, ni UDP ni DNS — l'audit promis au §6 reste à faire |
 | Recherche d'antériorité INPI / EUIPO, classes 9 et 42 | avant tout engagement de design |
 
-Ce document ne contient toujours **aucun chiffre de qualité citable**, et c'est voulu :
-le seul corpus qui tourne est un corpus de validation. La ligne qui bloque est
-désormais le téléchargement des jeux de test, plus le backend.
+Ce document contient un chiffre de qualité citable depuis le 2026-11-01 (WER 21,56 % sur
+`fleurs-fr-test`, §6) et **aucun chiffre comparable à un seuil** : la baseline cloud
+manque. La ligne qui bloque n'est plus le corpus général ni le backend, c'est la
+comparaison — et, pour le positionnement, la mesure sur la cible mobile.

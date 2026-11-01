@@ -1,0 +1,938 @@
+{
+  "dataset": "google/fleurs",
+  "config": "fr_fr",
+  "split": "test",
+  "commit": "70bb2e84b976b7e960aa89f1c648e09c59f894dd",
+  "licence": "CC-BY-4.0",
+  "attribution": "FLEURS: Few-shot Learning Evaluation of Universal Representations of Speech. Google, 2021. https://huggingface.co/datasets/google/fleurs",
+  "recupere_le": "2026-11-01T09:27:39.087458+00:00",
+  "outil": "tools/prepare_fleurs.py",
+  "duree_extraction_s": 41.8,
+  "transcriptions_sha256": "5d06d338b242e00786fcf12c4c92008b9f399d5a5c872c91dca90572e7869c0d",
+  "selection": "100 premiers membres de data/fr_fr/audio/test.tar.gz, ordre d'archive",
+  "enregistrements": 100,
+  "heures_audio": 0.2983,
+  "octets_ecrits": 34362800,
+  "formats": {
+    "sample_rate": [
+      16000
+    ],
+    "canaux": 1,
+    "profondeur_bits": 16,
+    "source": [
+      "{\"audio_format\": 3, \"bits_per_sample\": 32, \"num_channels\": 1, \"sample_rate\": 16000}"
+    ],
+    "conversion": [
+      "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    ]
+  },
+  "limites_source": [
+    "Le capteur et le niveau de bruit d'origine ne sont pas consignés par FLEURS : les colonnes correspondantes portent la mention explicite, pas une valeur par défaut.",
+    "Annotation de référence unique, non double-validée. La règle « double annotation dans les corpus de domaine » de eval/CORPUS.md ne peut pas être tenue ici.",
+    "Le locuteur n'est pas identifié : le genre est la seule stratification disponible.",
+    "Lecture de phrases isolées : rien sur les tours de parole, les hésitations ou le français spontané du client primaire.",
+    "La sélection est la tête d'archive, pas un tirage aléatoire : les taux mesurés ne s'affranchissent de rien d'autre que de la taille de l'échantillon."
+  ],
+  "fichiers": [
+    {
+      "audio": "10043298898524273336.wav",
+      "sha256": "fa85721119cd509cb006c096cc4d6d2e4f96a60abcda15b446ca622386dd965c",
+      "sha256_source": "c834367fd212902124bdd0e0f6c1f16b5561af6386600f145e5aec50008b298d",
+      "bytes": 326444,
+      "duration_s": 10.2,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10097171356371990207.wav",
+      "sha256": "b65baeda0f2f82ae6a07fae7188c29d775f61583cda493e37375f69b48618768",
+      "sha256_source": "9b9450e1cb9ea3badb2223f726adabb754cd6ff2278b9fc4dc2ad86c73791db7",
+      "bytes": 748844,
+      "duration_s": 23.4,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10138021779681596478.wav",
+      "sha256": "4c29264e7c0cc223e9528295e0bfc13a84113044857f30dc146f23e8b06325fc",
+      "sha256_source": "05ccf3ccc2ab4b72d056c3f02e3ffcf6ea0f37b1c42bea5c35789c85291fbdc5",
+      "bytes": 265004,
+      "duration_s": 8.28,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10143749263702132703.wav",
+      "sha256": "5b1d7bf6ce1971f812c7d5530ba159d2d67df8e4f63112865c0983493247cb99",
+      "sha256_source": "fc42db1a8eb9339fa89be21f013b2e2ea231b3eb9b4af3bf82c7a3a1aae78b3b",
+      "bytes": 326444,
+      "duration_s": 10.2,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10166091086920486572.wav",
+      "sha256": "be8a9699c0ec60f6a0a99d0310ae0b2c66b4fede11172273ab0a4ecbb44b05ed",
+      "sha256_source": "315a3fc3328acea267098f2cbc0cfa5dccee6e125c6861c229335f9b476cb4b9",
+      "bytes": 266924,
+      "duration_s": 8.34,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10174413140250646001.wav",
+      "sha256": "a4a5ef599e4536afc990ccfbf1eab6ba37a62efea576f6ed22e82ef8f2e55018",
+      "sha256_source": "bbd0709fac97a44791bceecac6d7e9ebf799625bbe62f13658d5634c7a8ddc2e",
+      "bytes": 230444,
+      "duration_s": 7.2,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10221277978969763776.wav",
+      "sha256": "3e0e0a1061a04430494eab4e6281b68783d6f6ce0f11002dd192f435ed7a95e7",
+      "sha256_source": "f149d230427496afa3223808edee58e64316f2bd3d879ad9c962b12d2f0bf9a3",
+      "bytes": 268844,
+      "duration_s": 8.4,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10334413597118469552.wav",
+      "sha256": "ab825260b8c1d0fe4b31ce383e42995ea02abaaa15efd16fef16c4af11b4be73",
+      "sha256_source": "7ec432adcd9dc8b56c41238f16fd11ec3acd93a9fd8c4b5d14a567e59aa9e7c3",
+      "bytes": 372524,
+      "duration_s": 11.64,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10385751433252343757.wav",
+      "sha256": "b30c9e6a0172aa4b81f4ca8928a4b808be412b60599a26d639b1ba17e034946d",
+      "sha256_source": "b9de46d46d5204457de15fb7a7dec50bb2e6d1f6353a871e238efcbcb0da57e6",
+      "bytes": 245804,
+      "duration_s": 7.68,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10399459061919571703.wav",
+      "sha256": "ca450b3309328a3ab895be7be09d61960a6bb0af42642c563f8f1cb6e7ad1886",
+      "sha256_source": "6e9abd557045f80d61c388412c99e5bfb2989f3d77504db10ed2fcf430c65cda",
+      "bytes": 474284,
+      "duration_s": 14.82,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10451502537136425109.wav",
+      "sha256": "333ae7f1bb1b99c7abba228c679b743223e1bd29aeebecd0b3793280a4d0a09e",
+      "sha256_source": "5685abb65ef34861710663e20655cb4d4e4bf4ec58809c04070f45ae14732a0f",
+      "bytes": 259244,
+      "duration_s": 8.1,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10473501692975174389.wav",
+      "sha256": "3192ff1120a3e999a94fbaac14f7d2ec3e33f454ad6a8017ff019684227b7f40",
+      "sha256_source": "ecf5a859024f83c266031fa158c0491858e3f528dcc3092a3092c73b512a0e93",
+      "bytes": 460844,
+      "duration_s": 14.4,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10481242713503018126.wav",
+      "sha256": "37b89a3a66faf22978a0c54a9367862995b34e6b90695dc1f50139853dc3cac9",
+      "sha256_source": "535bdcd0f6c18be1ccae6d74fbe9c7e51802d3f084cd20d7e2b2894c4fcdb5e0",
+      "bytes": 326444,
+      "duration_s": 10.2,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10496509281839367149.wav",
+      "sha256": "6ae5fdb71ada264db1217776adc42e395cbbd3b05ada22ffa2c5c46e5c3ad2a9",
+      "sha256_source": "4346f22bf351515ce7be700641bc7e4c16b6f8e9da820c9ee8eca174b803e4cb",
+      "bytes": 372524,
+      "duration_s": 11.64,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10550408276028637262.wav",
+      "sha256": "ca25b694871667abad76158f124082219b2afd833a6d866a9e344c93a2c6df39",
+      "sha256_source": "86678dab18ee990725ab574212c7d38caf34baa9a9e10282e243f977c1149545",
+      "bytes": 343724,
+      "duration_s": 10.74,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10551999992203614767.wav",
+      "sha256": "96b243b2fec5d8295a6ecd429db86e0d623027992125f93ce53334e95f40b717",
+      "sha256_source": "acceb6000dce94051977e66d16ed50e00dd4e462944e400590390ebd20042bfa",
+      "bytes": 437804,
+      "duration_s": 13.68,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1057422269812878594.wav",
+      "sha256": "f8ca1887080b85161ab6b8f3aec5562d79485a830297a88667207408ea9cbd97",
+      "sha256_source": "c3c9948f431264b47c09223b8fa61c6251d87372460aa45d83c149888f589f47",
+      "bytes": 883244,
+      "duration_s": 27.6,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10583265778505453148.wav",
+      "sha256": "52477650da5e33e79243e861fc38336e7dd6651b8b9f52fc06cc2e3838df1355",
+      "sha256_source": "a72a8c578f42f18202d671aaf173ba8cc938f559d833429b08f997d89bc6e802",
+      "bytes": 249644,
+      "duration_s": 7.8,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10603531439273760949.wav",
+      "sha256": "1e00513da333f004721058d802f6f56b8346c3708f56d8111fa20cbde062ce27",
+      "sha256_source": "8aa4a7a32be5080ab3a528d31a20010d4e87d1b1976108dbfb18eb3485dfc2d2",
+      "bytes": 457004,
+      "duration_s": 14.28,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1063626966878784571.wav",
+      "sha256": "e0284f38c7f1e1645d9ace1adbb73094c70b65e8a824191881a4d54dc73b5866",
+      "sha256_source": "a0763906f4dcc15b77778aed84583383d22ef762d26ffcbfc7e1e58b9770329c",
+      "bytes": 322604,
+      "duration_s": 10.08,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10677508033193966655.wav",
+      "sha256": "2303cc04ef521a377bde30664b2f0fa024ad8a5328ff9bd1988219a4f2cca7a3",
+      "sha256_source": "c927b5385feb0c88d7d7fbc03788d9cb876baabc3fba5ad96aa7f5a037bda453",
+      "bytes": 265004,
+      "duration_s": 8.28,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10703796668246155041.wav",
+      "sha256": "32b597e58a0f1b532014c60a19f62345394d2172573c4394c9882627d0325d13",
+      "sha256_source": "53b8bca377f386ea862dc283d98dd89789c5561a37d6ad57d9fd18e29743b4bc",
+      "bytes": 161324,
+      "duration_s": 5.04,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10709985934106699878.wav",
+      "sha256": "0134a681086515f6115e4d3d9e7fc9ffdb17301e0e928a7bad07e8c6396ac536",
+      "sha256_source": "bd8659d0cd833d8f0321aebe475059b484978e9f257462b34c076d21ae14bca4",
+      "bytes": 357164,
+      "duration_s": 11.16,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10777874021057022864.wav",
+      "sha256": "4d8c0f5d867bc157da0ad137e8e6ee5110c07f454ec06c98b1707f0190169cf4",
+      "sha256_source": "b13ad5213005365ea34a41b4d532805904e385ac0ed591d1ec591b2ef7fdf8d7",
+      "bytes": 457004,
+      "duration_s": 14.28,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10876086819338968684.wav",
+      "sha256": "3eb955ed8351d3306a28d21c155b3f0395053ae9b80e4bfc213c73258bcd2703",
+      "sha256_source": "428f3e32a5cd451737c83e2eab7cfdd4fb31075e87b5416d4fc65a899feb9964",
+      "bytes": 230444,
+      "duration_s": 7.2,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10879520346624605576.wav",
+      "sha256": "770fad607aa7bde8965ebdcea53217e2352b50b581aa913e8ed1e138834e4121",
+      "sha256_source": "0562eefd7fc9066f9f36a295d98ce00d8d4ffa007d7da9f67439363c5554f2cd",
+      "bytes": 395564,
+      "duration_s": 12.36,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10926529561499706520.wav",
+      "sha256": "0042d92a2504ff11ab4fec416509e3175c44bf3bff1c65c8e64bee9f76c4866e",
+      "sha256_source": "b053c513f6d6bf8be4aa99b60a892d41dc37a65980886850d1d45035ea08d4d1",
+      "bytes": 391724,
+      "duration_s": 12.24,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10929892609691631011.wav",
+      "sha256": "da99d6ebdc4ce8b270d10d2a1d4a9b3d5b27613ec5a0cb7298af3d0658114f3c",
+      "sha256_source": "9a5c724f2bc95871e804b6d43db48e0354885be2f46b5bd382ec907567950407",
+      "bytes": 322604,
+      "duration_s": 10.08,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10946670521716589729.wav",
+      "sha256": "a940a4662652aed25439d690abeae7f07e0436bef24ef9cf07157c1ba87b46cc",
+      "sha256_source": "4c6d87df2618326a4db8409e9078642d70714e48e872ea3e030d79c969fdceef",
+      "bytes": 261164,
+      "duration_s": 8.16,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "10991225759022624703.wav",
+      "sha256": "e7c7c46c9a271350323a1f1207c5d04631cebd4f4d5de934ab4f12f97b233a71",
+      "sha256_source": "36142b307c6eaf4563a8a8c165bcf93aaad8803b5f191cb58ce487a5526e3ac0",
+      "bytes": 213164,
+      "duration_s": 6.66,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1100355315202232555.wav",
+      "sha256": "0f4bb5f9322bbc5cba9691b2dabc0efe35c084fefd5e7ef68609a7a17bcba609",
+      "sha256_source": "27ec158234655831502db2018ef76912db66b93e8fcd1c0a769f2d191ea3550e",
+      "bytes": 368684,
+      "duration_s": 11.52,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11026160349720831517.wav",
+      "sha256": "669ae84dbb06b6991d318b7c59001f733c7877d86d3168be278310c05d8f4d40",
+      "sha256_source": "1f89fe5b6252183005b59b1ebe79cfe4a3dd31b7a914a60ad62cc3a0166d180e",
+      "bytes": 190124,
+      "duration_s": 5.94,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11053552208891406186.wav",
+      "sha256": "1acedf200215c661f281395083f7ffa45b6581b0672c70cbe92b0ffa77419321",
+      "sha256_source": "d05752f73cf6e412cf8f38feee7820681d4d8f686dec0f242e387f5eedf9da69",
+      "bytes": 457004,
+      "duration_s": 14.28,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11083144489197368524.wav",
+      "sha256": "a8a151d7965da41ad026871912ad75202db3da404f06ebf587cb75dadcefa85a",
+      "sha256_source": "2b3b2fe2540e8e60313eb8b306c014386c87879081a4d042867cc8582adad78d",
+      "bytes": 276524,
+      "duration_s": 8.64,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11120673739162246199.wav",
+      "sha256": "ceca9d3523a8960b5f8ade2071d34d7e84fb07e992598a0ea459c431bf5351d3",
+      "sha256_source": "2679245cea00107ab48995089a6065653720152eccb7466a33c9a615e18fb929",
+      "bytes": 491564,
+      "duration_s": 15.36,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11158186597445588152.wav",
+      "sha256": "557137b052afe3f0f1e922861fcb651f2d12cafc30fda09720cb1b8747e16317",
+      "sha256_source": "d1a2de68ffe6a1217147affa9c8890cfacb56bdc9f80c738c31cb9197fae449b",
+      "bytes": 430124,
+      "duration_s": 13.44,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11249797993904983848.wav",
+      "sha256": "d1b5362efb4182b732940fb3bad4381e51f539fd793f97947a95abe03cff6cf2",
+      "sha256_source": "d8400879df6198821ae86dcba9ac943ed098db7d360ce1d94d0a11e66b419d3b",
+      "bytes": 341804,
+      "duration_s": 10.68,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11274182791174433905.wav",
+      "sha256": "aa7e7a54fdc250c8d8a5e27efda384a8f86ca72651515c17506c896ec6eb3fad",
+      "sha256_source": "c60102628ace09a467af57802a6b0c441a58148a931f9358d3ad88a2ff3926c0",
+      "bytes": 441644,
+      "duration_s": 13.8,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11276086981803797470.wav",
+      "sha256": "79b7817002d701ff66858c4098bb0dd55230e4d1b925e4c82f2a74d3c99385cc",
+      "sha256_source": "66628ca6f8cf99069810b6cac9ae7c7052a82aa624b64ecea458ba8ed3fb4d53",
+      "bytes": 343724,
+      "duration_s": 10.74,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11290827732467943769.wav",
+      "sha256": "756d9114ae5256d7c8a3d431673ebad12690e83504219177b62070de8bf02c74",
+      "sha256_source": "5c764ad89ab5e7802cb5c6b5cbf74f0d556bc006a826ad40e15df811d3393f1c",
+      "bytes": 286124,
+      "duration_s": 8.94,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11291886014285704936.wav",
+      "sha256": "ce5f863a5ae8839b9f957222f428ad46870cb077826e04835986e987a522a2b2",
+      "sha256_source": "168d5f542887158874ad15ce9e43bbac49dfc38fdf5b08b526af5f6a91896ebd",
+      "bytes": 334124,
+      "duration_s": 10.44,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11295389174145067264.wav",
+      "sha256": "e4e2c6d9a5c8c351c05a0a9e1743985617971b3117adfa23e6f7eefa6df6399a",
+      "sha256_source": "8167d6f635897490d19f63103fa5bc7656f90cedc81445f82e4d433b29128c03",
+      "bytes": 313004,
+      "duration_s": 9.78,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11393230959697418927.wav",
+      "sha256": "c164d42ab4b28fb14f3cbf907c764a96c32b3a4fbd73171b311d77092bdf7aa4",
+      "sha256_source": "593cee2433dbfbe1f02c5c2621437dd495f4876bc788fa67eb7fa11bc2f96f51",
+      "bytes": 266924,
+      "duration_s": 8.34,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11394417412118428520.wav",
+      "sha256": "fc4b3c6ddf3055bf8ed861c1bfc928740b53d4f2b413588a8355a5bc936f8c6c",
+      "sha256_source": "e0da9f1be856b4e92570846d2c3fd79a3b72417f022b867616a582047bee1e7b",
+      "bytes": 566444,
+      "duration_s": 17.7,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11431212784065590790.wav",
+      "sha256": "f51f86119c330ea19cfacbb20a5a25a8108277d46070f88b8f1e230b1505ea3f",
+      "sha256_source": "73d87f62c7c7e7317fbcd5cc3552bad250a764ef3a051c6762fd15f71978c126",
+      "bytes": 121004,
+      "duration_s": 3.78,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11459739058484338122.wav",
+      "sha256": "d60f4a2d357fc4286d0b47526e2466e386d099180adaeca81995c647233e6bd1",
+      "sha256_source": "1e100129c07215259950e3c660ab993c9319bd90dbac332a8f600e8be00f9d77",
+      "bytes": 134444,
+      "duration_s": 4.2,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11533511509432532232.wav",
+      "sha256": "9dce3754c3b588d9a6ade17aa98cf44bf590c4d0ba3ddc78b62c6dd5f6e9c964",
+      "sha256_source": "4fcf54599f00f2759c498282e95f8db39f70c303376973ec01fa67324373a0d6",
+      "bytes": 289964,
+      "duration_s": 9.06,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11535401847300751607.wav",
+      "sha256": "01576ccdff9967479a3fdbd844de76ab6101e694d788a2af96f32a2b547156f5",
+      "sha256_source": "8a6526dcbeeab9590ed09bd1a6ad0e093e158b4265fb1fb373c255355b9339dc",
+      "bytes": 263084,
+      "duration_s": 8.22,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11537679603629573994.wav",
+      "sha256": "3ddb266dfcd94ca65d9b20c3654a7db1d58af076e40417cd247b6741e7ddfbac",
+      "sha256_source": "3a15361ec68e5efeb9d6878015f4db7974a6b38553c9220b4e950b0393bf6525",
+      "bytes": 255404,
+      "duration_s": 7.98,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11575460016199460203.wav",
+      "sha256": "6d4d2394e94b31670a5e4322aba96a82cceb6a6aae1501fd6c58412fc5cb40ff",
+      "sha256_source": "4ce67f5627153c42c1e2ca878fc8b9e5126a9214fc8056ea8a2153377e43cabf",
+      "bytes": 142124,
+      "duration_s": 4.44,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11578776386501968433.wav",
+      "sha256": "ce5b0fed14c77c20839c9b2102283960491a6269bcb386b46ee7d8de84014dc6",
+      "sha256_source": "9fed5ac8ef9a3902918b4171dfca798f645a54248c708dbe2622ce3c2131a07b",
+      "bytes": 353324,
+      "duration_s": 11.04,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11607313175569654.wav",
+      "sha256": "be313a7b2122034320ad3f3bd73d175ccd738d9ce5dd6d39fc531841bbca10a6",
+      "sha256_source": "3a35f349763763a3b38eb730f1715c1085512e305d32dc88137bd4bcf6b9d546",
+      "bytes": 587564,
+      "duration_s": 18.36,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11608262059921773552.wav",
+      "sha256": "a5c3539f33ebf6fb768b7379f6b2ac22ec7ee0feceae8b906d3ca2c6b13aea1c",
+      "sha256_source": "ec7ff977afb2f334dc781dcc7cd471367c1091b2e5426ccac636807e5505750f",
+      "bytes": 466604,
+      "duration_s": 14.58,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1162079411554372718.wav",
+      "sha256": "f0113c8b4630788c69f2430885dae908b3dff1144d9fccb87f39df4b6b6e5a9f",
+      "sha256_source": "b3a053199217eaf78d7c88455eaa5df8856715d71d014c63a3977552eaa66197",
+      "bytes": 372524,
+      "duration_s": 11.64,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11634268379217352583.wav",
+      "sha256": "b48f156c16508ae9cad8a0d71635739be15ba4c68918529e630e87cacf3d5264",
+      "sha256_source": "b70ae22fb497b3353ad835ad043c1c7990cf7b56ad7ba2c3b95e62cfa6e5a473",
+      "bytes": 389804,
+      "duration_s": 12.18,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11637469397576410753.wav",
+      "sha256": "655ac17738a8a2dda44921dca2717e0e893828dd150d9130a9cbf4a9b70abc94",
+      "sha256_source": "4621e93a13b59808e84472664bf27a596fca423074208bafc626678efc60cd2e",
+      "bytes": 466604,
+      "duration_s": 14.58,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11644651343215870474.wav",
+      "sha256": "f7e6c76c60007cc908aaeb38ab7a30e993018702d1df140e122d946b4cfc3aa8",
+      "sha256_source": "15566b986a205b1b7f67b401bf0be9adf1f837bad2f01f1f7e55a583c8e28faf",
+      "bytes": 188204,
+      "duration_s": 5.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11682027895910012832.wav",
+      "sha256": "ea4f43d84b4900e451b4857336eb9df4d6e924f5f588c02b706e2861f83da461",
+      "sha256_source": "1792277d81b0d74a7271be93d01143f0d38c979e50a4684532b9f5392bac20fd",
+      "bytes": 368684,
+      "duration_s": 11.52,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11743576916303436440.wav",
+      "sha256": "46d87d60c51e8076c7d2904cbaf8e466164b016ab32037cd2598530faa454d32",
+      "sha256_source": "47fed330087ec156e8775ebcc840a7d56e72734c531ecd468f984522d19a15d8",
+      "bytes": 234284,
+      "duration_s": 7.32,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11754984077214765937.wav",
+      "sha256": "b32afc8ae01ad9f506dc30a93b2c426f2fed6fd48cc8e1cacf06d6193a4fd12a",
+      "sha256_source": "019b9f0eeb824644a0c0d289707080637414488b51e5026b78aba977294e006e",
+      "bytes": 380204,
+      "duration_s": 11.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "118005971910520590.wav",
+      "sha256": "66a1d00018ee7603dc7d7efaf5de8d01311abf7be2a7adffe1fbd27fe9634a11",
+      "sha256_source": "a9f38f8ba2721acc90aede2b3d7a80fdbaf48a16f8d5604b41d00162c43603c7",
+      "bytes": 347564,
+      "duration_s": 10.86,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1183195841366637455.wav",
+      "sha256": "aee289e29abfbc634b06e57f4f94c85baf3f8128f1f39b8a83b7d780b8e94ba4",
+      "sha256_source": "a103341d0480e9ae3a1b682e4a9854c1dfb96092b4ad86ef1a93839f8266832a",
+      "bytes": 230444,
+      "duration_s": 7.2,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11868760808794373459.wav",
+      "sha256": "bc570fa18bb1afc08a380536225f92feedf425d4938e1bf03b90ffeb534a980e",
+      "sha256_source": "041b5a3133653bf512592ac5b86c11c8dc1b88ef4162fcc93e739ee83e230ce9",
+      "bytes": 328364,
+      "duration_s": 10.26,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11897674795285346876.wav",
+      "sha256": "eb9cfdc95f88c3c0581f2a95599075681ece2b2b350701c6bec77d7e298736aa",
+      "sha256_source": "61e1a7a39e0638392a96ebb9a4f0912bfa10426bbcd841aec02dc3b8c173b441",
+      "bytes": 291884,
+      "duration_s": 9.12,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11910542683193923576.wav",
+      "sha256": "828bf1791b090e2b788553c9f251e00fa6d7a40fcc691d0ba598fc4e90370adb",
+      "sha256_source": "b5904c57f9dd21eb2e9b46813ea43735074babbc48db24249bc1ce8b9b66e024",
+      "bytes": 368684,
+      "duration_s": 11.52,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11916362556087332141.wav",
+      "sha256": "0411a2f5184000e75ebfd90f6869ac135eddb77bf72b1fdb25e196d92e535f14",
+      "sha256_source": "54d79de251c168ba93fc9494307f7a1c6b16a160b7678f0af9ca44c76a06c3af",
+      "bytes": 259244,
+      "duration_s": 8.1,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11926538826833635593.wav",
+      "sha256": "935beeb52e14a3e3fb3e70975ab89752074096633e007d8d5fa99e5932eda125",
+      "sha256_source": "c897a7ce56ed1be19fc48b67ef1460931c290e2dc386bc961ad6487c5711bef6",
+      "bytes": 203564,
+      "duration_s": 6.36,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11933446372961728981.wav",
+      "sha256": "dec2640c766452e45a20fcc8e3500fd0050bcb42e79c684c7ae8b4c85492be54",
+      "sha256_source": "6aad04cf74f999b56995c993cd74dff027d0736e3c319e2d67a1f001004eb507",
+      "bytes": 362924,
+      "duration_s": 11.34,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11961715422517660841.wav",
+      "sha256": "49eec750c645e5f68d104b5a21af2838870632479cf9dda78814c51489bdff0b",
+      "sha256_source": "09d50929d8e9d1132461541a57c9d560a5b8a6a3e242afd5ac5cea7bfeb22b3f",
+      "bytes": 357164,
+      "duration_s": 11.16,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "11962196321446720509.wav",
+      "sha256": "1fe11e3c341006f65a0846702b98e3ad3b1033996f6ac28c515f4c0c7eb18815",
+      "sha256_source": "5516a3edce7eb2a5aa3bd9fd896d33b9b26f870fe9ebaba4f24096bc90560773",
+      "bytes": 441644,
+      "duration_s": 13.8,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1200691263101632363.wav",
+      "sha256": "ae1e727b010fa2d1ee70a3010bd3092cd503e78599a8ad3ba0cb552c567a444c",
+      "sha256_source": "10f542c9966b835f6c1bac099e28c60728316966994200db04bd3725a011732c",
+      "bytes": 230444,
+      "duration_s": 7.2,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12010154632627664704.wav",
+      "sha256": "f9360e2f5956450b656b8f7bad0644fe88041ce8f780126dc267202bf01e423d",
+      "sha256_source": "106b10e7553a3d974fdcf4acb99dcd016f26485bddaf74c08d0837ee9a439841",
+      "bytes": 514604,
+      "duration_s": 16.08,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12024924858287651798.wav",
+      "sha256": "0f7cd658c2b48c07153d7eef5f7c4122944bf83ba69644327191a90e6fd09626",
+      "sha256_source": "0418cca5bf8badd296283d75fe8d2f76eeecbe3f6c59ca6698808ec067150f95",
+      "bytes": 232364,
+      "duration_s": 7.26,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1206682315590486480.wav",
+      "sha256": "58d05dc17a7f398caef8cadf701002270a9d3979de28de69915b6b8afc09844f",
+      "sha256_source": "a86dc85dc0d339e4e83f6a4667651583ea06d9ac69434ac891656b2875971e00",
+      "bytes": 351404,
+      "duration_s": 10.98,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12075385725888039173.wav",
+      "sha256": "d4e4747805eb31386ec303caa1ee71ff06473a0a246d33a79ee7604bfc165f01",
+      "sha256_source": "d079be60158a32c755148437120c446b736a9665e4436a24d238230ad29b5d37",
+      "bytes": 186284,
+      "duration_s": 5.82,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12131971660452738342.wav",
+      "sha256": "3c6600c6d4a3c146d1ab76a39cbf3bdf82374a117057b266389c5f2a862a6801",
+      "sha256_source": "20256b2d491b0b0a8ee06061ec7e9a080f1ee56ab9dc8ed7448a186910f45d3f",
+      "bytes": 380204,
+      "duration_s": 11.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12134016059159477965.wav",
+      "sha256": "5edcbc8fa71a6a4af0023a05eea636919e2d580b828e5e72c9c121353c748e70",
+      "sha256_source": "d95d81013a989a4ad5f129f169b8f3cc3d307a6bb41b36f1a969d0ead2a9e8ee",
+      "bytes": 274604,
+      "duration_s": 8.58,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12140928166693713243.wav",
+      "sha256": "7f80cc090e818720d328d16b45115faeb7d93348b0d74aafbb45bfc75c5cf7a7",
+      "sha256_source": "30701a31d9948c7d6b4b0a1f96bc98dad8b92565bf750a2fb4746d8560cc3250",
+      "bytes": 422444,
+      "duration_s": 13.2,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12145447530749713446.wav",
+      "sha256": "18da2bce5d1846819bda4a580c881939c3d9bbacba5ecb3b4ccc73400e9cb366",
+      "sha256_source": "3681a7c53071e3501870c1318c6a53f191035ca64b4cdd3b71185a548a381f91",
+      "bytes": 257324,
+      "duration_s": 8.04,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12170410141556380483.wav",
+      "sha256": "e2098e158fac161bd0eb991df2b3eb4131b3061c5df12f4ed599f4ed3d93d837",
+      "sha256_source": "c49f484442caf14bbc268485431437e18cf9ad0960f0fb4b7c2976af54dad181",
+      "bytes": 324524,
+      "duration_s": 10.14,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12171786125835775453.wav",
+      "sha256": "f0d988c24d44329faf8f35322d5130d75c6c53a8337c1ccbcea0398788faf6fb",
+      "sha256_source": "9a0b2dbce0ce99f0d082ceb42a9fe760cf98c1531b1cbc314f337b9310a533fb",
+      "bytes": 376364,
+      "duration_s": 11.76,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12192777180469045381.wav",
+      "sha256": "b4500244f889c7fd29c3230e3d61b2beb1a7f404da719eeb56d6021f640070d5",
+      "sha256_source": "b3c94624caeae215a5e2605f011976c96c2be0fa8f250dd3aee4727faaff57b8",
+      "bytes": 476204,
+      "duration_s": 14.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12217957387078475556.wav",
+      "sha256": "db778346e07d9f188153745d12eca2354671f752caf409e3e1dfe6c09a72e643",
+      "sha256_source": "3e7573d7e6e87b92c0e95671acac187cb16c0fb433f87f5facea4ce20fa54b88",
+      "bytes": 284204,
+      "duration_s": 8.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12249640021026661306.wav",
+      "sha256": "5c2703ef3c73b7cd100e443afb49dec9019bb00e4dc71c4c8a3339f9e25f3990",
+      "sha256_source": "4c2d0ffbb4f7e212e538dd855f4e06dc6019c9a00e7715b508797f53a2046ae5",
+      "bytes": 416684,
+      "duration_s": 13.02,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "122619262747635040.wav",
+      "sha256": "a1a221a1c837513ba2a9c33818d4a11af0d0c000af5e767a3cb7947eb5f79d25",
+      "sha256_source": "0f023fecbd88b1e782f044947ea4d8574d817bf9fd2149fdf561a37e50acd512",
+      "bytes": 205484,
+      "duration_s": 6.42,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12262618654193075873.wav",
+      "sha256": "464df77b1230b1689bf640107d9c7f880bb65d43cb0f88ae5c5e01bb4eca33dd",
+      "sha256_source": "89cbaa21859c216e261197d614e6369bb50a117163011bc60fda8db0d6ee6004",
+      "bytes": 190124,
+      "duration_s": 5.94,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12265382986326314541.wav",
+      "sha256": "f6057100c711a07d54a4c6ebf351353544a71dda7bf2d2a8b6835e1c98acfc50",
+      "sha256_source": "aa91709a6b595c5cf80896949aad5beb5b6b20bb2c4e60de85ca100b9afbcf06",
+      "bytes": 889004,
+      "duration_s": 27.78,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12271397797191229695.wav",
+      "sha256": "f402bc3caf1ba2a188ebb7449d762a02f00c65cdd799388a708da4d7f8568773",
+      "sha256_source": "6b3394cb32d403a56736057bf41f27d9d34e9f1d491f69950a9d4f035422deab",
+      "bytes": 410924,
+      "duration_s": 12.84,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "122946205367383977.wav",
+      "sha256": "3fad152f59afe0b1392e1c39c23b7cf908118e7305c82234a640f45b0981dbe1",
+      "sha256_source": "103214474d34c675e721159e200ea093335e337fa9ee5d5a4e17d0e5283b343a",
+      "bytes": 172844,
+      "duration_s": 5.4,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12304870150060032664.wav",
+      "sha256": "e5e61ea7a04f2eb3b8149c788f037b873a53e13ac3c3473c80faba3fc255a556",
+      "sha256_source": "c4ea544011f4693e62159313d8452130e59da710fa332d79808670bd590a43e8",
+      "bytes": 274604,
+      "duration_s": 8.58,
+      "genre": "FEMALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12398040402215842582.wav",
+      "sha256": "b32b68f89e5775f97cd564c8587624b6da8cc6fc1e677270cc2f8a2ac84bdf55",
+      "sha256_source": "a9aedc2923eacf989fbce1a321d8f8b71117ca80b31bcf1739c94eadf6140f8f",
+      "bytes": 263084,
+      "duration_s": 8.22,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12405478354284816354.wav",
+      "sha256": "f8c4ba17eb35d18f88e70cd4a6116988067db43f1dd023c7ac8111da4b8fd4ff",
+      "sha256_source": "f7ed989838d985cbd5a3164f4e58712329b9ad390a24f40439ac807ee307e773",
+      "bytes": 476204,
+      "duration_s": 14.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1242560659356681932.wav",
+      "sha256": "affdd9a198b43897bb1ee681946dfe505daa33d42b48e9f1e73146bf8311e745",
+      "sha256_source": "2d57244391ef1fd23b62fc5777239e36f95ee01d201b9228b90c25ad9efd5801",
+      "bytes": 380204,
+      "duration_s": 11.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12463754265383123135.wav",
+      "sha256": "c4f633a8ba32e2a5ce652dbf425984dd3d40b9acae8acc8b654b902fb15c8afc",
+      "sha256_source": "e9178d71c279e32bc0767e67a9c09ce34567a01a305078ced3bec4fb9687f2eb",
+      "bytes": 380204,
+      "duration_s": 11.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12479666886919657463.wav",
+      "sha256": "fe5bec84a3a0a03f79ecc04c54f47995eab64a3da5531d1c9a1d87417d0c3c06",
+      "sha256_source": "6353727378b5b3da6d902209fe1ddd30d7446f695db8fef79c0c0fa832cad39e",
+      "bytes": 399404,
+      "duration_s": 12.48,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1248471468252958520.wav",
+      "sha256": "48afc593b3d29b30ca00ee42e6c8101c6d241d5354c22374b86c63fb54325b54",
+      "sha256_source": "e95c4239f1d1bae76ddeae2c09e5348c885d8d9b44708300a1405265adaf4efa",
+      "bytes": 397484,
+      "duration_s": 12.42,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12549203010893340688.wav",
+      "sha256": "4ccde68565fd860450bb53e7b13182a5c2c146466cf571da40b193f15e25b66a",
+      "sha256_source": "e17fd7724ccda8ebbdb4bc87561d69aed45ea05ba7968ecfedeac91363911fdc",
+      "bytes": 284204,
+      "duration_s": 8.88,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12562966463470285240.wav",
+      "sha256": "66c123fb5e65309ef15e78077496add6a3900d3546a8047a50efcf6d17835a40",
+      "sha256_source": "8c0f6d2bfb2019a2a9d152ae977d8a5bd7ddee01610f1288ff70dfac180f94d4",
+      "bytes": 407084,
+      "duration_s": 12.72,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "1257025013625665435.wav",
+      "sha256": "cc22867ee8cb7cda7c8e4af7db69cfc55467332e6e637be5e9276ca9af128116",
+      "sha256_source": "2575a8e24c09cda414d5395768441656c85492f93f5568399cf0a9a3931c6a92",
+      "bytes": 193964,
+      "duration_s": 6.06,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    },
+    {
+      "audio": "12623958270472538706.wav",
+      "sha256": "49546e44c063d507eb9396547550dc3628bae9cfeb5cc7f59d223c1c822da391",
+      "sha256_source": "1ae3bf9240524b8ee1875aa5fa498b24323afa8d4004e120c0a55c4613a754ab",
+      "bytes": 303404,
+      "duration_s": 9.48,
+      "genre": "MALE",
+      "conversion": "float32 -> int16 (arrondi, même nombre d'échantillons)"
+    }
+  ]
+}

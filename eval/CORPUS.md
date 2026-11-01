@@ -10,8 +10,9 @@ conditions et les règles d'exclusion. Il précède toute rédaction de page pro
    jamais ouverte, avec un jeton de verrouillage consigné dans le rapport.
 2. **Un chiffre sans conditions n'est pas un chiffre.** Chaque publication porte :
    corpus et version, heures d'audio, nombre d'énoncés, variante de français,
-   microphone, rapport signal sur bruit, matériel, version du modèle, version de la
-   normalisation, lien vers le manifeste JSON.
+   microphone, rapport signal sur bruit, matériel, version du modèle, **empreinte de la
+   normalisation**, nombre de campagnes derrière le chiffre, lien vers le manifeste
+   JSON.
 3. **Les variantes de français ne se mélangent pas.** fr-FR, fr-CA et les variétés
    d'Afrique francophone donnent des taux distincts et des erreurs distinctes. Une
    moyenne sur un mélange est ininterprétable.
@@ -27,7 +28,7 @@ conditions et les règles d'exclusion. Il précède toute rédaction de page pro
 
 | Jeu | Rôle | Source | Licence |
 |---|---|---|---|
-| **général** | chiffre de référence public, comparable | FLEURS (fr), Mozilla Common Voice (fr) | à confirmer au téléchargement (FLEURS sous accord de recherche, CV en CC0) |
+| **général** | chiffre de référence public, comparable | FLEURS (fr), Mozilla Common Voice (fr) | FLEURS : CC-BY-4.0 (vérifiée sur la fiche du dépôt, tag `license:cc-by-4.0`) ; CV : CC0 |
 | **conversationnel** | tours de parole, hésitations, chevauchements | EPAC — 100 h de journalisme conversationnel français | à confirmer |
 | **médical** | domaine primaire : vocabulaire, dictée clinicien | corpus de conversations médicales en français (CEA, HAL `cea-04511815`) ; VibraVox (Cnam) pour les captations multi-capteurs | accord requis pour les données de patients |
 | **juridique** | domaine secondaire : prétoire, noms propres, chiffres | benchmark juridique français de Garneau & Bolduc 2024 (`arXiv:2408.11940`) | dérivé d'audiences, redistribution à vérifier |
@@ -70,12 +71,48 @@ générale en public et la précision spécialisée en privé. Elle doit être �
 explicitement dans toute fiche produit, sinon « WER de 6 % en médical » finira par être
 lu comme un chiffre public alors qu'il ne peut pas l'être.
 
+## Ce qui est constitué, et ce qu'il permet de dire
+
+`corpora/fleurs-fr-test` — 100 énoncés du split `test` de `google/fleurs`, configuration
+`fr_fr`, commit `70bb2e84b976b7e960aa89f1c648e09c59f894dd`, 0,298 h d'audio, licence
+CC-BY-4.0. Constitué par `tools/prepare_fleurs.py` ; `PROVENANCE.json` conserve le
+sha256 de chaque fichier, le sha256 du TSV des références et l'empreinte du fichier
+source avant conversion float32 → PCM 16 bits.
+
+Ce que ce jeu autorise et ce qu'il n'autorise pas :
+
+- **la taille de l'échantillon est la limite assumée** : 1 074 s d'audio sur 100 énoncés,
+  1 032 s et 2 477 mots de référence après les 3 énoncés de chauffe. L'intervalle de
+  confiance à 95 % publié avec le taux dit de combien de pourcentage on dispose
+  réellement.
+- **la sélection est la tête d'archive**, pas un tirage aléatoire. Rien ne dit qu'elle
+  ressemble au reste du split.
+- **la stratification disponible est le genre**, et elle n'est pas équilibrée dans ces
+  100 premiers : 76 hommes, 21 femmes mesurés. Un écart F/H lu là-dessus est une
+  observation, pas un résultat.
+- **une seule annotation de référence** : la règle 5 (double annotation en domaine) ne
+  peut pas être tenue ici, et FLEURS n'est justement pas un corpus de domaine.
+- **le capteur et le bruit d'origine ne sont pas consignés** par la source. Les colonnes
+  `micro` et `bruit_db` existent et portent la mention explicite. Rien des trois axes du
+  § Conditions de test n'est donc mesuré sur ce jeu.
+- **ce n'est pas du français spontané** : des phrases lues. Le client primaire du §3 de
+  `docs/brand.md` parle en dictée continue, avec des hésitations.
+
+Common Voice fr n'est pas encore téléchargé : il exige un compte et l'acceptation des
+conditions d'accès, et son export n'est plus un simple fichier d'archive. EPAC, le corpus
+CEA, Garneau & Bolduc et ELRA-S0228_77 restent à négocier.
+
 ## Statut
 
 | Élément | État |
 |---|---|
-| Harnais de mesure | en place, 22 tests |
-| Jeu `demo` (4 énoncés synthétiques) | en place — valide le pipeline, ne mesure rien |
-| Jeux FLEURS / Common Voice | à télécharger et à consigner en SHA256 |
-| Corpus médicaux et juridiques | à négocier, accord de licence préalable |
-| Backend de modèle réel | à écrire — sans lui, aucun chiffre n'existe |
+| Harnais de mesure | en place, 45 tests |
+| Agrégat de campagnes répétées (`harness.repeat`) | en place : accord des taux, dispersion des temps, intervalle sur les énoncés |
+| Backend de modèle réel | en place (`vosk-small-fr`), chargé et mesuré en local |
+| `demo` (4 énoncés sinusoïdaux) | en place — valide le pipeline, ne mesure rien |
+| `synth-fr` (12 énoncés TTS) | en place — validation de pipeline, une seule voix |
+| `fleurs-fr-test` (100 énoncés) | **en place** — premier chiffre citable : WER 21,56 %, 3 campagnes, [rapport](reports/2026-11-01-fleurs100-vosk.md) |
+| Common Voice fr, EPAC, médicaux, juridiques, poste de travail | à constituer ou à négocier |
+| Baseline cloud sur le même audio | absente : sans elle, un taux ne compare rien |
+| Variante de français autre que fr-FR | absente : la règle 3 n'est pas testable pour l'instant |
+| Axe capteur et axe bruit | absents : la source publique ne les consigne pas |

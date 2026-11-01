@@ -6,19 +6,21 @@ comparer deux rapports suppose les deux normalisations identiques.
 
 from __future__ import annotations
 
+import hashlib
 import math
 import re
 import unicodedata
 
-__all__ = ["normalize_fr", "tokenize", "edit_script", "wer", "cer", "percentile", "aggregate"]
+__all__ = ["normalize_fr", "empreinte_normalisation", "tokenize", "edit_script",
+           "wer", "cer", "percentile", "aggregate"]
 
 # Apostrophe sous ses variantes typographiques : ramenée au signe ASCII.
 _APOSTROPHE_VARIANTS = "'’ʼ‘´`"
 
 # Ni espace ni apostrophe : l'espace structure les mots, l'apostrophe porte l'élision
-# et se traite juste après.
+# et se traite juste après. Ni le trait d'union non plus : « états-unis » reste un mot.
 _PONCTUATION = "".join(chr(code) for code in (
-    0x21, 0x22, 0x5C, 0x23, 0x24, 0x25, 0x26, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x3A, 0x3B,
+    0x21, 0x22, 0x5C, 0x23, 0x24, 0x25, 0x26, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2E, 0x3A, 0x3B,
     0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x5B, 0x5D, 0x7B, 0x7D, 0x7C, 0x7E,
     0x2012, 0x2013, 0x2014, 0x2015, 0x00AB, 0x00BB, 0x201C, 0x201D, 0x201E, 0x2020,
 ))
@@ -54,6 +56,17 @@ def normalize_fr(text: str) -> str:
     # Apostrophe réduite à un token isolé après nettoyage.
     text = re.sub(r"(^| )'($| )", " ", text)
     return re.sub(r"\s+", " ", text).strip()
+
+
+def empreinte_normalisation() -> str:
+    """Empreinte du comportement de normalisation, consignée dans chaque manifeste.
+
+    Comparer deux rapports suppose la même normalisation. Le nom du module ne suffit
+    pas : un point oublié dans le jeu de ponctuation change les taux sans changer
+    d'adresse. Cette empreinte rend la rupture détectable sans relire le code.
+    """
+    materiau = "|".join(("".join(_COMBINANTS), _APOSTROPHE_VARIANTS, _PONCTUATION, _SEPARATEURS))
+    return hashlib.sha256(materiau.encode("utf-8")).hexdigest()[:16]
 
 
 def tokenize(text: str, level: str = "w") -> list[str]:

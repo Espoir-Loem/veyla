@@ -75,6 +75,11 @@ Deux conséquences, dont une correction de ce document :
    un rapport seul peut être cité hors de sa variance. À boucher avant toute publication
    de latence.
 
+**Note ajoutée après la campagne FLEURS.** La conclusion « dépassé de 64 % » vaut pour
+ce corpus, pas pour le modèle. Sur 1 031,8 s de parole humaine et des énoncés de 10,6 s,
+le même modèle donne un RTF de 0,44 à 0,65 : le coût fixe par énoncé, qui pèse sur des
+segments de 2,9 s, s'amortit. Voir `2026-11-01-fleurs100-vosk.md`.
+
 ## Détail des erreurs restantes
 
 Sur 11 énoncés, 6 transcrits exactement. Les écarts sont des substitutions de mots
