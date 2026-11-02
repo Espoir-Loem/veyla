@@ -124,7 +124,9 @@ première et publierait un pic mémoire faux — et rend deux choses séparées 
 S'y ajoute un **intervalle de confiance à 95 %** obtenu en réechantillonnant les énoncés
 avec remise (graine consignée, réechantillonnages consignés) : la variation due à la
 taille de l'échantillon, pas à l'ordonnanceur. Le titre du rapport énonce le nombre de
-campagnes qui l'ont produit.
+campagnes qui l'ont produit. Si les campagnes rendent des taux différents, l'intervalle
+n'est **pas** publié : celui d'une seule campagne ne couvre pas cette dispersion, et le
+rapport affiche le min et le max observés à la place.
 
 ```bash
 cd eval && python -m harness.repeat --corpus corpora/fleurs-fr-test --backend vosk-small-fr \
