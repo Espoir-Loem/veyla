@@ -19,6 +19,7 @@ n'autorise pas. Les campagnes antérieures sur voix de synthèse
 | `docs/brand.md` | thèse, promesses et anti-promesses, discipline des chiffres, principes, refus d'utilisation, seuils d'acceptation, ce qui tuerait le produit |
 | `eval/README.md` | harnais de mesure : ce qu'il calcule, ce qu'il refuse de publier, comment ajouter un modèle |
 | `eval/CORPUS.md` | jeux de test, conditions de bruit/capteur/longueur, règles d'exclusion |
+| `docs/dev.md` | méthode de développement : TDD d'abord, SOLID et KISS appliqués à ce dépôt |
 
 ## Vérifier que la machine de mesure fonctionne
 
