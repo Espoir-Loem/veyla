@@ -88,18 +88,27 @@ def synthese(campagnes: list[dict], reprises: int = REPRISES,
 
     # Une seule campagne porte l'intervalle : les énoncés sont les mêmes d'une campagne
     # à l'autre quand le modèle est déterministe. Quand ils ne le sont pas, le dire.
+    accord_des_taux = {"wer": _serie(wer), "cer": _serie(cer)}
     rows = campagnes[0]["mesures_brutes"]
     rng = random.Random(graine)
     intervalles = {}
     for nom, estimation in (("wer", wer[0]), ("cer", cer[0])):
-        bornes = bootstrap_enonces(rows, nom, reprises, rng) if estimation is not None else None
-        if bornes:
-            intervalles[nom] = {"estimation": estimation,
-                                "ic95": [round(bornes[0], 6), round(bornes[1], 6)]}
+        intervalle = {"estimation": estimation, "ic95": None}
+        if estimation is None:
+            intervalle["motif"] = "aucun taux agrégé sur la première campagne"
+        elif accord_des_taux[nom]["identique"] is False:
+            # Réechantillonner une seule campagne ne couvre pas l'écart observé entre
+            # campagnes : publier cet intervalle attribuerait tout au hasard du corpus.
+            intervalle["motif"] = ("les campagnes rendent des taux divergents : "
+                                   "l'intervalle d'une seule campagne ne couvre pas "
+                                   "cette dispersion")
         else:
-            motif = ("moins de deux énoncés mesurés" if estimation is not None
-                     else "aucun taux agrégé sur la première campagne")
-            intervalles[nom] = {"estimation": estimation, "ic95": None, "motif": motif}
+            bornes = bootstrap_enonces(rows, nom, reprises, rng)
+            if bornes:
+                intervalle["ic95"] = [round(bornes[0], 6), round(bornes[1], 6)]
+            else:
+                intervalle["motif"] = "moins de deux énoncés mesurés"
+        intervalles[nom] = intervalle
 
     valides = [c for c in campagnes if c.get("mesure_valide")]
     return {
@@ -112,7 +121,7 @@ def synthese(campagnes: list[dict], reprises: int = REPRISES,
         "backend": campagnes[0]["backend"],
         "corpus": campagnes[0]["corpus"],
         # Convergence des taux et stabilité des temps : deux questions distinctes.
-        "accord_des_taux": {"wer": _serie(wer), "cer": _serie(cer)},
+        "accord_des_taux": accord_des_taux,
         "dispersion": {"rtf": _serie(rtf),
                        "latence_médiane_ms": _serie(mediane),
                        "latence_p95_ms": _serie(p95),
