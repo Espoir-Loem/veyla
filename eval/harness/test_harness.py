@@ -358,6 +358,15 @@ class TestAgregatDeCampagnes(unittest.TestCase):
         self.assertFalse(accord["identique"])
         self.assertEqual((accord["min"], accord["max"]), (0.10, 0.12))
 
+    def test_un_intervalle_n_est_pas_publie_quand_les_taux_divergent(self):
+        # L'intervalle est calculé sur la seule campagne 1. Si les campagnes ne
+        # rendent pas le même taux, il ne couvre pas la dispersion observée : le
+        # publier laisserait croire que l'incertitude vient uniquement de l'échantillon.
+        agg = repeat.synthese([self._campagne(wer=0.10), self._campagne(wer=0.12)])
+        intervalle = agg["intervalles"]["wer"]
+        self.assertIsNone(intervalle["ic95"])
+        self.assertIn("divergent", intervalle["motif"])
+
     def test_temps_et_taux_sont_des_questions_separees(self):
         # Deterministe sur les taux, instable sur les temps : le cas observe avec Vosk.
         agg = repeat.synthese([self._campagne(rtf=0.60, mediane=4000.0),
