@@ -18,6 +18,7 @@ import random
 import sys
 import wave
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
@@ -263,22 +264,35 @@ def resolve_model_dir(model_dir: str | os.PathLike[str] | None = None) -> Path:
 class ConsentProof:
     """Preuve locale de consentement pour le clonage (§8)."""
 
-    path: Path
+    path: Path | None
     sha256: str
     subject: str
     granted_by: str
     statement: str
+    mode: str = "fichier"  # « fichier » (JSON) ou « attestation » (nom en ligne de commande)
 
 
 def load_consent(path: str | os.PathLike[str] | None) -> ConsentProof:
-    """Lit et valide une preuve de consentement JSON. Lève `MissingConsent` sinon."""
-    if not path:
+    """Lit une preuve de consentement : un fichier JSON, ou le nom de la personne.
+
+    Un nom (« Alice Martin ») vaut attestation : la personne qui lance la commande
+    déclare que la personne nommée a consenti. L'attestation est datée et inscrite
+    dans le fichier de provenance. Un chemin en `.json` absent reste une erreur :
+    c'est presque toujours une faute de frappe, pas un nom.
+    """
+    if not path or not str(path).strip():
         raise MissingConsent(
-            "consentement requis pour le clonage : fournir --consent <fichier.json>."
+            'consentement requis pour le clonage : --consent "Nom de la personne" '
+            "ou --consent <fichier.json>."
         )
     proof_path = Path(path)
     if not proof_path.is_file():
-        raise MissingConsent(f"preuve de consentement introuvable : {proof_path}")
+        if str(path).lower().endswith(".json"):
+            raise MissingConsent(
+                f"preuve de consentement introuvable : {proof_path}. "
+                'Ou donner directement le nom : --consent "Nom de la personne".'
+            )
+        return _attestation(str(path).strip())
     try:
         raw = json.loads(proof_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -303,6 +317,28 @@ def load_consent(path: str | os.PathLike[str] | None) -> ConsentProof:
         subject=values["subject"],
         granted_by=values["granted_by"],
         statement=values["statement"],
+    )
+
+
+def _attestation(name: str) -> ConsentProof:
+    statement = f"{name} a consenti au clonage de sa voix (attestation en ligne de commande)."
+    record = json.dumps(
+        {
+            "subject": name,
+            "granted_by": name,
+            "statement": statement,
+            "at": datetime.now(timezone.utc).isoformat(),
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    return ConsentProof(
+        path=None,
+        sha256=hashlib.sha256(record.encode("utf-8")).hexdigest(),
+        subject=name,
+        granted_by=name,
+        statement=statement,
+        mode="attestation",
     )
 
 

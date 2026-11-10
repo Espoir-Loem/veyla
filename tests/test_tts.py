@@ -282,6 +282,17 @@ class TestConsent(unittest.TestCase):
             with self.assertRaises(tts.MissingConsent):
                 tts.load_consent(path)
 
+    def test_un_nom_vaut_attestation(self):
+        proof = tts.load_consent("Alice Martin")
+        self.assertEqual(proof.subject, "Alice Martin")
+        self.assertEqual(proof.mode, "attestation")
+        self.assertIsNone(proof.path)
+        self.assertEqual(len(proof.sha256), 64)
+
+    def test_nom_vide_refuse(self):
+        with self.assertRaises(tts.MissingConsent):
+            tts.load_consent("   ")
+
     def test_refuse_fichier_absent(self):
         with self.assertRaises(tts.MissingConsent):
             tts.load_consent("/inexistant/consent.json")
@@ -372,6 +383,29 @@ class TestCliClone(unittest.TestCase):
             self.assertTrue(payload["synthetic"])
             self.assertEqual(payload["consent_subject"], "A")
             self.assertIn("provenance", sortie)
+
+
+class TestCliCloneAttestation(unittest.TestCase):
+    def test_consentement_par_nom_sans_fichier(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ref = Path(tmp) / "ref.wav"
+            tts.write_wav(ref, tone(0.25), RATE)
+            out = Path(tmp) / "clone.wav"
+            erreur = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(erreur):
+                code = cli.main(
+                    ["clone", "bonjour", "--ref-audio", str(ref), "--consent", "Alice Martin",
+                     "--out", str(out), "--no-play"],
+                    clone_factory=lambda *a, **k: ToneEngine(),
+                    player=lambda p: "fake",
+                )
+            self.assertEqual(code, 0, erreur.getvalue())
+            payload = json.loads(
+                out.with_name("clone.provenance.json").read_text(encoding="utf-8")
+            )
+        self.assertEqual(payload["consent_subject"], "Alice Martin")
+        self.assertEqual(payload["consent_mode"], "attestation")
+        self.assertIsNone(payload["consent_file"])
 
 
 class FakeQwenModel:

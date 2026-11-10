@@ -149,15 +149,19 @@ fichier sur le disque. `--json` indique `played` et `player`.
 
 ## Cloner une voix
 
-Le clonage utilise Qwen3-TTS (`Qwen/Qwen3-TTS-12Hz-0.6B-Base`, 2,4 Go). Il exige une
-preuve de consentement locale (§8 de `docs/brand.md`).
+Le clonage utilise Qwen3-TTS (`Qwen/Qwen3-TTS-12Hz-0.6B-Base`, 2,4 Go). `--consent`
+nomme la personne dont la voix est clonée (§8 de `docs/brand.md`) :
 
 ```bash
-printf '{"subject":"...","granted_by":"...","statement":"..."}' > consent.json
 .venv/bin/veyla clone "Bonjour, ceci est ma voix clonée." \
   --ref-audio prise.wav --ref-text "ce qui est dit dans prise.wav" \
-  --consent consent.json --out clone.wav
+  --consent "Alice Martin" --out clone.wav
 ```
+
+Donner un nom revient à attester que cette personne a consenti ; l'attestation est
+datée et inscrite dans le fichier de provenance. Pour une preuve plus complète,
+`--consent` accepte aussi un fichier JSON avec les champs `subject`, `granted_by` et
+`statement`.
 
 La référence peut aussi être un fichier audio ou vidéo, ou une URL de vidéo (extra
 `url`) :
@@ -165,7 +169,7 @@ La référence peut aussi être un fichier audio ou vidéo, ou une URL de vidéo
 ```bash
 .venv/bin/veyla clone "Texte à dire." \
   --ref-audio "https://www.youtube.com/watch?v=..." --ref-start 12 --ref-duration 15 \
-  --ref-text "ce qui est dit entre 12 et 27 s" --isolate-voice --consent consent.json
+  --ref-text "ce qui est dit entre 12 et 27 s" --isolate-voice --consent "Alice Martin"
 ```
 
 Le consentement est vérifié avant tout téléchargement. Le passage choisi doit contenir

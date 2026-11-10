@@ -258,8 +258,12 @@ Ce qui est dans le produit, et pas seulement dans les conditions d'utilisation :
 5. Aucune télémétrie cachée. Nous ne pouvons pas mesurer ce que nous promettons de ne
    pas recevoir ; le principe 3 du §5 en tire les conséquences.
 
-État au 2026-11-11 : `veyla clone` exige `--consent` et écrit un fichier de
-provenance qui déclare l'audio synthétique et contient l'empreinte de la preuve. Le
+État au 2026-11-11 : `veyla clone` exige `--consent`, qui accepte le nom de la
+personne (attestation datée, adaptée à l'alpha) ou un fichier JSON de preuve. Un
+fichier de provenance déclare l'audio synthétique et contient l'attestation ou
+l'empreinte de la preuve. Avant une version stable, l'attestation par nom devra être
+remplacée par un recueil plus solide (enregistrement de la personne qui lit une
+phrase de consentement). Le
 marquage C2PA et le filigrane ne sont pas encore implémentés.
 
 ### 8.1 Les cinq refus

@@ -125,7 +125,8 @@ def _build_parser() -> argparse.ArgumentParser:
     clone.add_argument(
         "--consent",
         required=True,
-        help="fichier JSON de preuve de consentement (§8)",
+        help='nom de la personne dont la voix est clonée ("Alice Martin"), '
+        "ou fichier JSON de preuve (§8)",
     )
     clone.add_argument(
         "--play",
@@ -324,7 +325,9 @@ def _clone_from(args, clone_factory, player, consent, reference) -> int:
             "ref_duration_s": args.ref_duration,
             "ref_voice_isolated": args.isolate_voice,
             "ref_audio_sha256": _sha256_file(ref_path),
-            "consent_file": str(Path(args.consent).resolve()),
+            "consent_mode": consent.mode,
+            "consent_file": str(consent.path.resolve()) if consent.path else None,
+            "consent_statement": consent.statement,
             "consent_sha256": consent.sha256,
             "consent_subject": consent.subject,
             "created_at": datetime.now(timezone.utc).isoformat(),
