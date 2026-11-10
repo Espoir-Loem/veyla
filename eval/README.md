@@ -95,6 +95,15 @@ comparables, et cela se lit sans relire le code. Un point oublié dans le jeu de
 ponctuation a fait 3,35 points de WER sur un corpus réel avant que ce mécanisme
 n'existe ([rapport](reports/2026-11-01-normalisation-point-oublie.md)).
 
+Empreinte courante : **`58bbb1e6cbd991c8`**. Elle diffère de `1ad9ce8f9ca241ce`
+(2026-11-01) parce que deux caractères manquaient au jeu de ponctuation : l'ellipsis
+`…` (U+2026) et l'accent circonflexe isolé `^` (0x5E). Comptés comme du texte, ils
+auraient transformé « attends… » en un mot différent de « attends » — exactement la
+classe de défaut du point oublié. Aucun corpus actuel n'en contient (vérifié : 0
+occurrence), et le recalcul des hypothèses stockées redonne les mêmes WER, CER et RTF.
+Les manifestes du 2026-11-01 conservent leur empreinte d'origine : ce sont les traces
+du code qui les a produits, pas des fichiers à réécrire.
+
 ## Formats de corpus acceptés
 
 - `manifest.tsv` — en-tête obligatoire. Colonnes de base : `utt_id`, `audio`,

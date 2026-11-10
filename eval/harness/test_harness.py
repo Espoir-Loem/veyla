@@ -89,6 +89,13 @@ class TestNormalisation(unittest.TestCase):
         self.assertEqual(metrics.tokenize(metrics.normalize_fr("les États-Unis")),
                          ["les", "états-unis"])
 
+    def test_ellipsis_et_caret_ne_deviennent_pas_des_mots(self):
+        # Même classe de défaut que le point oublié : un caractère absent du jeu
+        # transforme une fin de phrase en substitution inventée par l'instrument.
+        self.assertEqual(metrics.normalize_fr("attends… bon"), "attends bon")
+        self.assertEqual(metrics.normalize_fr("deux ^ trois"), "deux trois")
+        self.assertEqual(metrics.wer("attends…", "attends")["errors"], 0)
+
     def test_empreinte_reflete_le_jeu_de_ponctuation(self):
         avant = metrics.empreinte_normalisation()
         conserve = metrics._PONCTUATION
@@ -162,6 +169,22 @@ class TestAgregation(unittest.TestCase):
         self.assertAlmostEqual(agg["rtf"], (5500.0 / 1000) / 5.0)
         self.assertEqual(agg["latency_ms"]["median"], 500.0)
         self.assertEqual(agg["latency_ms"]["p95"], 1000.0)
+
+    def test_rtf_porte_sur_les_enonces_apparies(self):
+        # Un conteneur dont la durée est illisible ne doit pas laisser son temps de
+        # calcul au numérateur pendant que sa durée sort du dénominateur (RTF x2).
+        rows = [self._row("a b", "a b", latency=2000.0, duration=1.0),
+                self._row("a b", "a b", latency=2000.0, duration=None)]
+        agg = metrics.aggregate(rows)
+        self.assertAlmostEqual(agg["rtf"], 2.0)
+        self.assertEqual(agg["rtf_utterances"], 1)
+        # La durée inconnue reste exclue de l'audio mesurée, pas devinée.
+        self.assertAlmostEqual(agg["audio_seconds"], 1.0)
+
+    def test_rtf_abstenu_sans_duree_connue(self):
+        agg = metrics.aggregate([self._row("a b", "a b", latency=100.0, duration=None)])
+        self.assertIsNone(agg["rtf"])
+        self.assertEqual(agg["rtf_utterances"], 0)
 
     def test_percentile_rang_plus_proche(self):
         self.assertEqual(metrics.percentile([1, 2, 3, 4], 95), 4)

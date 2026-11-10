@@ -7,6 +7,11 @@ eval/corpora/*
 .qoder/settings.local.json
 .venv/
 models/
+*.egg-info/
+build/
+dist/
+out/
+
 !eval/corpora/synth-fr/
 !eval/corpora/synth-fr/**
 eval/corpora/synth-fr/tts.ps1
@@ -17,3 +22,6 @@ eval/corpora/synth-fr/tts.ps1
 !eval/corpora/fleurs-fr-test/
 eval/corpora/fleurs-fr-test/*.wav
 .cache/
+
+.venv-clone/
+/voix.wav

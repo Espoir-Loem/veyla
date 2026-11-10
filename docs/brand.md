@@ -70,7 +70,7 @@ Nous ne dirons jamais, même sous pression commerciale :
 
 - « coût 0 $ » → **Réformulé :** coût marginal serveur nul ; coût transféré sur l'appareil de l'utilisateur, chiffré par nous.
 - « temps réel absolu / <10 ms » → **Réformulé :** latence de bout en bout mesurée par appareil, au protocol §6. Le délai d'écriture à l'écran est une latence de décodage autoregressive, pas une taille de tampon audio.
-- « clonage de voix » → **Réformulé :** *transformation de voix* (timbre, hauteur, couleur). Un pipeline source-filtre + Match EQ ne restitue ni les trajectoires de formants sur diphtongues, ni le bruit respiratoire, ni jitter/shimmer, ni la prosodie, donc pas l'identité d'un locuteur. La similitude neuronale zero-shot (embedding locuteur conditionnant un vocoder) est un autre produit, sur une autre route, avec un autre régime éthique.
+- « clonage de voix » → **Réformulé :** *clonage zero-shot*, avec l'audio de référence et le consentement qui vont avec. Depuis le 2026-11-10, le clonage est **dans le périmètre produit** (décision du porteur, §12). Il ne se confond pas avec le traitement audio : un égaliseur et un compresseur colorent, ils n'identifient personne. Le clonage suppose un encodeur de locuteur entraîné ; c'est un modèle, pas un filtre, et il passe par le §8.
 - « confidentiel par design, RGPD conforme » → **Réformulé :** aucune donnée audio transitée par nos services, vérifiable par audit. La conformité RGPD est la responsabilité du client en tant que responsable de traitement ; nous fournissons les moyens, pas une certification implicite.
 - « IA libre et légère, sans GPU » → **Réformulé :** nous embarquons des réseaux de neurones compressés. Nous ne cachons pas le neural derrière un vernis DSP.
 
@@ -83,7 +83,7 @@ Ce tableau est l'actif le plus utile du document. Chaque phrase marketing doit p
 | « 0 $ d'infrastructure » | CDN de distribution, R&D d'éval, coût transféré à l'utilisateur | « zéro serveur côté développeur ; N Mo distribués, X Go de pic mémoire client » |
 | « <10 ms » | confond quantum audio et latence ASR | « latence médiane `[à mesurer]` ms sur `[appareil de référence]`, p95 comprise » |
 | « fiabilité professionnelle » | non falsifiable | « WER `[à mesurer]` % sur `[corpus]`, comparé à `[baseline]` » |
-| « clonage instantané » | le DSP colore, il n'identifie pas | hors périmètre jusqu'au jalon TTS (§10) |
+| « clonage instantané » | *instantané* est faux : il faut un audio de référence et une preuve de consentement | « clonage depuis N secondes de référence, consentement capturé, audio marqué synthétique » |
 | « scalable à 10 M d'utilisateurs » | zéro télémétrie = zéro preuve de scaling | « la charge est par appareil ; nous ne mesurons pas nos utilisateurs » |
 | « aucune donnée ne sort » | vrai pour l'audio, pas pour les mises à jour/métriques opt-in | énumérer *exactement* ce qui sort, avec capture réseau publique |
 
@@ -98,8 +98,8 @@ Décision bloquée : publier une fiche produit sans chiffre reproductible.
 Conséquence : notre asset de crédibilité n'est pas le white paper, c'est la suite d'évaluation publique et son harness. C'est un investissement, pas un annexe.
 
 **2. Le périmètre est un produit.**
-Décision bloquée : ajouter le clonage neural par pression de vente.
-Une capacité qui ouvre un risque d'utilisation non couvert n'entre pas dans le périmètre. Pas de greffon, pas de beta « pour la démo ».
+Décision bloquée : ajouter une capacité de génération sans son régime de consentement.
+Le clonage est entré dans le périmètre le 2026-11-10, sur décision du porteur. Il n'entre pas sans le §8 : preuve de consentement locale et marquage de l'artefact avant toute sortie. Pas de greffon, pas de beta « pour la démo ».
 
 **3. L'honnêteté sur ce que l'edge nous coûte.**
 Décision bloquée : taire l'absence d'apprentissage.
@@ -117,8 +117,7 @@ Voir §8. Non négociable, non configurable par le client.
 
 ## 6. Preuve : le protocole, pas le slogan
 
-Le harnais existe : `eval/harness/` (stdlib Python seul, 45 tests, rapport JSON + vue
-markdown). Le protocole de corpus est écrit dans `eval/CORPUS.md`. Un backend de modèle
+Le harnais existe : `eval/harness/` (stdlib Python seul, rapport JSON + vue markdown). Le protocole de corpus est écrit dans `eval/CORPUS.md`. Un backend de modèle
 réel tourne : Vosk `small-fr`, 65 MiB dépaqué, sans compte ni clé.
 
 **Le premier chiffre citable existe depuis le 2026-11-01**, sur la seule parole humaine
@@ -184,7 +183,7 @@ peut pas être cité, même comme illustration.
 
 | À éviter | À utiliser |
 |---|---|
-| « clonage de voix instantané » | « transformation de voix locale » |
+| « clonage de voix instantané » | « clonage depuis N s de référence, consentement capturé, audio marqué synthétique » |
 | « 0 $ » | « sans serveur côté éditeur » |
 | « temps réel absolu » | « latence sous N ms sur ces appareils » |
 | « IA légère sans GPU » | « modèle quantifié int8, CPU ou GPU selon l'appareil » |
@@ -290,7 +289,7 @@ Choix délibéré : nous ne pouvons pas mesurer notre propre usage depuis nos se
 Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauvais moment.
 
 - Pas de plateforme, pas de marché de voix, pas de dashboard hébergé. Un dashboard cloud réintroduit exactement ce que nous vendons comme inutile.
-- **Aucune génération de voix en v1.** Ni clonage, ni transformation, ni zero-shot. La v1 ne produit que du texte à partir d'un audio déjà chez le client : rien à watermarker, rien à consentir. Chaque capacité de génération repasse par le §8 et par le jalon §10.4, dans cet ordre et jamais l'inverse.
+- **Voix standard par défaut, clonage ouvert sous conditions (décision du 2026-11-10).** `silure say` synthétise avec une voix française standard (Piper `fr_FR-siwis-medium`, 22 050 Hz, locale) — c'est la sortie par défaut, celle qui n'ingère aucun enregistrement personnel. Le porteur a demandé le clonage : il entre dans le périmètre, mais **derrière le §8**, pas à côté. Une voix clonée exige (a) l'audio de référence fourni par la personne ou par son mandataire, (b) une preuve de consentement capturée localement, (c) un marquage synthétique de l'artefact. Tant que ces trois points ne sont pas implémentés, la capacité n'est pas livrée : le §8 reste la condition, pas la documentation. État technique au 2026-11-10 : ZipVoice, le clonage zero-shot de sherpa-onnx, ne couvre que le chinois et l'anglais ; un modèle français (XTTS-v2, F5-TTS fr, OpenVoice v2) demande un autre moteur et une décision de licence. Le WAV produit est déclaré synthétique par la CLI (`--json` : `engine`) ; aucun marquage C2PA n'est encore émis.
 - Pas de multilingue exhaustif au lancement : fr + en, corpus de domaine, puis extension sur preuve.
 - Pas de revendication économique (rentabilité, indépendance, démocratisation) dans le contenu produit. C'est notre motivation, ce n'est pas notre argument de vente.
 - Pas de course aux paramètres. Kokoro à 82 Mo est un meilleur pari qu'un modèle plus gros qu'aucun téléphone ne chargera.
@@ -327,7 +326,7 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
    positionnement : nous serions une bibliothèque de desktop, ce qui est un autre
    produit, avec un autre marché et une autre marque.
 2. **Le plateau de non-apprentissage est plus proche que prévu.** Sans retour d'utilisation, un concurrent cloud peut nous dépasser sur le domaine en un cycle d'entraînement. Mitigation : spécialisation sur les cas confidentialité-d'abord, où le cloud ne peut pas entrer pour des raisons légales et non techniques.
-3. **La transformation de voix est vendue comme clonage par l'équipe commerciale.** Le risque n'est pas technique, il est interne. C'est le §4 qui le prévient.
+3. **Le clonage est vendu comme une fonction ordinaire, sans consentement capturé ni marquage.** Le risque n'est pas technique, il est interne : une capacité ouverte le 2026-11-10 peut être livrée sans son régime §8. C'est le §4 et le principe 5 du §5 qui le préviennent.
 4. **Un usage malveillant rendu public.** Architecture sans journal = pas d'attribution d'origine, pas de détection server-side. Un seul cas médiatisé et nous perdons le primaire (santé, juridique) qui est la seule raison d'être du produit.
 5. **La RAM, pas la licence.** Si la livraison dépasse le budget mémoire d'un Android milieu de gamme, le marché se réduit au desktop et « edge » devient un mot vide.
 
@@ -337,10 +336,16 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 
 | Élément | Statut |
 |---|---|
-| Harnais de mesure — stdlib, 45 tests, manifeste SHA256 | fait : `eval/harness/` |
+| Harnais de mesure — stdlib, manifeste SHA256 | fait : `eval/harness/` |
+| Paquet installable — API `silure.transcribe` et CLI `silure transcribe` | fait : `pyproject.toml`, `src/silure/` |
+| Instrument de mesure — RTF apparié, ponctuation complétée (empreinte `58bbb1e6cbd991c8`) | corrigé le 2026-11-10 : `eval/harness/metrics.py` |
 | Protocole de corpus — jeux, conditions, règles d'exclusion | fait : `eval/CORPUS.md` |
 | Nom | tranché : **Silure**, sous réserve d'antériorité |
-| Périmètre v1 | tranché : **STT seule**, aucune génération |
+| Périmètre v1 | tranché : **STT + TTS voix standard** (`silure transcribe`, `silure say`) ; clonage ouvert le 2026-11-10 sous conditions §8, non implémenté (§12) |
+| Clonage zero-shot français | non implémenté : ZipVoice (sherpa-onnx 1.13.8) ne couvre que zh/en ; Kokoro multi-lang testé et écarté (français non intelligible : « Bonjour » → « poche jours ») ; un modèle français exige un nouveau moteur (XTTS-v2, F5-TTS, OpenVoice) et une décision de licence |
+| Synthèse locale — Piper `fr_FR-siwis-medium`, 67 Mo, sortie 22 050 Hz | fait le 2026-11-10 : `src/silure/tts.py`, 4,24 s d'audio pour 48 caractères (pic −7,3 dBFS), refus explicite d'un signal muet |
+| Lecture audio | fait le 2026-11-10 : `src/silure/players.py`, active par défaut (`winsound` Windows, `afplay` macOS, `pw-play`/`paplay`/`aplay`/`ffplay` Linux), échec explicite au lieu du silence |
+| Rendu audio — styles `podcast`, `clair`, `neutre` | fait le 2026-11-10 : `src/silure/master.py`, DSP sans dépendance (passe-haut, cloche, compression 2:1, crête −1 dBFS). Mesuré : RMS −19,0 → −16,2 dBFS, énergie > 3 kHz 2,6 → 3,8 %, même transcription. Ne change pas le timbre : ce n'est pas du clonage (§12) |
 | Seuils d'acceptation | fixés : table du §13.1 |
 | Cinq refus d'utilisation | écrits : §8.1 |
 | Backend d'un modèle réel | fait : `vosk-small-fr`, branché dans `harness.backends_vosk` |

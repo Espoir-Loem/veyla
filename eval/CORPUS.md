@@ -106,7 +106,7 @@ CEA, Garneau & Bolduc et ELRA-S0228_77 restent à négocier.
 
 | Élément | État |
 |---|---|
-| Harnais de mesure | en place, 45 tests |
+| Harnais de mesure | en place, suite exécutable |
 | Agrégat de campagnes répétées (`harness.repeat`) | en place : accord des taux, dispersion des temps, intervalle sur les énoncés |
 | Backend de modèle réel | en place (`vosk-small-fr`), chargé et mesuré en local |
 | `demo` (4 énoncés sinusoïdaux) | en place — valide le pipeline, ne mesure rien |

@@ -21,8 +21,9 @@ _APOSTROPHE_VARIANTS = "'’ʼ‘´`"
 # et se traite juste après. Ni le trait d'union non plus : « états-unis » reste un mot.
 _PONCTUATION = "".join(chr(code) for code in (
     0x21, 0x22, 0x5C, 0x23, 0x24, 0x25, 0x26, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2E, 0x3A, 0x3B,
-    0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x5B, 0x5D, 0x7B, 0x7D, 0x7C, 0x7E,
+    0x3C, 0x3D, 0x3E, 0x3F, 0x40, 0x5B, 0x5D, 0x5E, 0x7B, 0x7D, 0x7C, 0x7E,
     0x2012, 0x2013, 0x2014, 0x2015, 0x00AB, 0x00BB, 0x201C, 0x201D, 0x201E, 0x2020,
+    0x2026,
 ))
 
 # Marques invisibles et séparateurs non typographiques : convertis en espace, jamais
@@ -168,7 +169,14 @@ def aggregate(rows: list[dict]) -> dict:
     latencies = [r["latency_ms"] for r in rows if r.get("latency_ms") is not None]
     durations = [r["audio_duration_s"] for r in rows if r.get("audio_duration_s")]
     total_audio = sum(durations)
-    total_compute = sum(r["latency_ms"] / 1000 for r in rows if r.get("latency_ms") is not None)
+    # Numérateur et dénominateur du RTF doivent porter sur les mêmes énoncés. Une durée
+    # illisible (conteneur non WAV) sortait du dénominateur en laissant son temps de
+    # calcul au numérateur : le RTF était surestimé. On n'apparie que ce qui est connu
+    # des deux côtés, et on expose combien d'énoncés ont servi.
+    paired = [(r["latency_ms"], r["audio_duration_s"]) for r in rows
+              if r.get("latency_ms") is not None and r.get("audio_duration_s")]
+    paired_audio = sum(duration for _, duration in paired)
+    paired_compute = sum(latency / 1000 for latency, _ in paired)
 
     out = {
         "utterances": len(rows),
@@ -189,5 +197,6 @@ def aggregate(rows: list[dict]) -> dict:
         }
         # RTF = temps de calcul sur durée audio. En dessous de 1.0, plus rapide que
         # l'écoute en continu.
-        out["rtf"] = total_compute / total_audio if total_audio else None
+        out["rtf"] = paired_compute / paired_audio if paired_audio else None
+        out["rtf_utterances"] = len(paired)
     return out
