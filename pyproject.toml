@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "veyla"
+version = "0.2.0"
+description = "Reconnaissance et synthèse vocales exécutées sur l'appareil, sans serveur"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["asr", "speech-to-text", "tts", "text-to-speech", "on-device", "french"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Natural Language :: French",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+dependencies = []
+
+[project.optional-dependencies]
+vosk = ["vosk>=0.3.45"]
+# sherpa-onnx 2.x ne compile plus le frontend espeak-ng : les modèles Piper ont
+# besoin de la 1.13 pour être phonémisés.
+# sherpa-onnx-core fournit libonnxruntime.so : sans lui, l'import échoue.
+tts = ["sherpa-onnx>=1.13,<2", "sherpa-onnx-core>=1.13,<2"]
+# torchaudio déclaré ici pour que uv le prenne aussi sur l'index CPU (sinon : roue CUDA,
+# incompatible avec torch CPU, `_torchaudio.so` ne se charge pas).
+clone = ["qwen-tts>=0.1", "torch>=2.0", "torchaudio>=2.0", "soundfile>=0.12"]
+# Référence de clonage depuis une URL ou une vidéo : téléchargement et conversion.
+url = ["yt-dlp>=2025.1", "imageio-ffmpeg>=0.5"]
+# Séparation voix / musique de la référence (Demucs htdemucs, ~80 Mo, ~1 Go de RAM).
+isolate = ["demucs>=4.0"]
+
+[project.scripts]
+veyla = "veyla.cli:main"
+
+[dependency-groups]
+dev = ["ruff>=0.17"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+# torch et torchaudio depuis l'index CPU de PyTorch : la roue PyPI pour Linux
+# embarque CUDA (plusieurs Go de bibliothèques nvidia) que Veyla n'utilise pas.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform != 'darwin'" }]
+torchaudio = [{ index = "pytorch-cpu", marker = "sys_platform != 'darwin'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
