@@ -1,4 +1,4 @@
-"""Veyla — voix locale : transcription et synthèse.
+"""Veyla - voix locale : transcription et synthèse.
 
 Contrat public :
 

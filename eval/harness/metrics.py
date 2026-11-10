@@ -27,7 +27,7 @@ _PONCTUATION = "".join(chr(code) for code in (
 ))
 
 # Marques invisibles et séparateurs non typographiques : convertis en espace, jamais
-# supprimés — les coller produirait de faux mots.
+# supprimés - les coller produirait de faux mots.
 _SEPARATEURS = "".join(chr(code) for code in (
     0x00A0, 0x202F, 0x2007, 0x2009, 0x200A, 0x2002, 0x2003, 0x3000, 0x2060, 0x200B, 0xFEFF,
 ))

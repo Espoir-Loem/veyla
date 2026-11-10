@@ -18,8 +18,8 @@ et, plus tard, la bibliothèque.
 5. **Une correction de prose n'exige pas de test ; elle exige une source.** Une mesure
    citée sans son manifeste n'est pas une correction, c'est une affirmation.
 
-Les tests vivent à côté du code qu'ils spécifient — aujourd'hui
-`eval/harness/test_harness.py`, en bibliothèque standard — et se lancent par
+Les tests vivent à côté du code qu'ils spécifient - aujourd'hui
+`eval/harness/test_harness.py`, en bibliothèque standard - et se lancent par
 `python -m unittest discover -s eval`. Les valeurs attendues sont calculées à la main
 dans le test : si le test casse, c'est la définition du chiffre publié qui a bougé, pas
 un détail d'implémentation.
@@ -28,20 +28,20 @@ un détail d'implémentation.
 
 Chaque principe doit changer une décision, sinon il n'est pas retenu.
 
-- **S — une responsabilité par module.** `metrics` calcule, `runner` charge le corpus et
+- **S - une responsabilité par module.** `metrics` calcule, `runner` charge le corpus et
   orchestre, `repeat` agrège, `probes` mesure la machine, `backends_*` parle au modèle.
   Un module qui calcule un taux, écrit un fichier et décide d'un axe a déjà trois raisons
   de changer.
-- **O — un backend est un fichier.** Ajouter un modèle ne modifie pas `REGISTRY` : on
+- **O - un backend est un fichier.** Ajouter un modèle ne modifie pas `REGISTRY` : on
   dépose `backends_<nom>.py`. La découverte tolérante est ce qui permet d'étendre sans
   éditer le socle.
-- **L — un backend tient son contrat.** `name`, `inprocess`, `model_files`, `load()`,
+- **L - un backend tient son contrat.** `name`, `inprocess`, `model_files`, `load()`,
   `transcribe(path) -> str`. Aucun backend ne reçoit de traitement spécial dans le
   runner ; s'il en faut un, c'est le contrat qui est faux.
-- **I — cinq membres, pas plus.** Le contrat d'un backend ne porte ni le corpus, ni les
+- **I - cinq membres, pas plus.** Le contrat d'un backend ne porte ni le corpus, ni les
   métriques, ni la politique de reprise. Un backend qui doit connaître le harnais est un
   backend mal découpé.
-- **D — le harnais dépend du contrat, pas de Vosk.** `runner` n'importe jamais
+- **D - le harnais dépend du contrat, pas de Vosk.** `runner` n'importe jamais
   `backends_vosk` ; `metrics` n'importe ni fichier ni réseau. C'est ce qui rend le calcul
   testable sans corpus et le harnais exécutable sans modèle.
 
@@ -76,5 +76,5 @@ Chaque principe doit changer une décision, sinon il n'est pas retenu.
 - si un chiffre publié change, le manifeste, le rapport et l'empreinte de normalisation
   sont mis à jour ensemble ;
 - le message de commit dit ce que la mesure a appris, pas seulement ce que le code fait ;
-- aucune donnée dérivée (audio, modèle, cache) n'entre dans le dépôt — la provenance, la
+- aucune donnée dérivée (audio, modèle, cache) n'entre dans le dépôt - la provenance, la
   licence et les empreintes, elles, y entrent toujours.

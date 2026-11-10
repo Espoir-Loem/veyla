@@ -1,6 +1,6 @@
 """Backend Vosk : reconnaissance vocale locale, hors ligne, modèle français compact.
 
-Le module s'importe sans Vosk installé — c'est l'instanciation qui échoue, avec
+Le module s'importe sans Vosk installé - c'est l'instanciation qui échoue, avec
 l'installation à demander. Le harnais reste ainsi en bibliothèque standard pour
 tout ce qui n'est pas un backend.
 """

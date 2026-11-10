@@ -122,7 +122,7 @@ def play_file(path: str | Path, players: list[AudioPlayer] | None = None) -> str
     """Joue `path` avec le premier lecteur qui marche, et rend son nom.
 
     Lève `MissingDependency` si aucun lecteur n'existe sur la machine, et
-    `VeylaError` si tous ceux présents échouent — avec le détail de chacun.
+    `VeylaError` si tous ceux présents échouent - avec le détail de chacun.
     """
     target = Path(path)
     candidates = default_players() if players is None else players

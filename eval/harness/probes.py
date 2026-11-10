@@ -38,7 +38,7 @@ def peak_rss_bytes() -> dict:
 
     Ne couvre que le processus du harnais : un backend lancé en sous-processus
     échappe à cette mesure (il faudrait un Job Object Windows). Le harnais le
-    refuse au lieu de publier un chiffre faux — voir backends.Backend.inprocess.
+    refuse au lieu de publier un chiffre faux - voir backends.Backend.inprocess.
     """
     if sys.platform == "win32":
         import ctypes

@@ -8,8 +8,8 @@ reste celui du modèle.
 Le style `studio` suit la chaîne d'un ingénieur du son pour la voix parlée :
 nettoyage des silences et fondus, passe-haut 24 dB/oct, égalisation soustractive
 puis présence et air, dé-esseur, compression 3:1, normalisation en loudness
-(ITU-R BS.1770-4, −16 LUFS : la cible podcast/web) et limiteur à anticipation sous
-−1 dBTP, mesuré en pic réel (suréchantillonnage ×4).
+(ITU-R BS.1770-4, -16 LUFS : la cible podcast/web) et limiteur à anticipation sous
+-1 dBTP, mesuré en pic réel (suréchantillonnage x4).
 """
 
 from __future__ import annotations
@@ -44,16 +44,16 @@ __all__ = [
 #: Styles proposés par défaut. `neutre` n'applique aucun filtre.
 STYLES = ("neutre", "clair", "podcast", "studio", "radio", "chaud")
 
-#: Pic de sortie visé : −1 dBFS, marge habituelle avant l'encodage.
+#: Pic de sortie visé : -1 dBFS, marge habituelle avant l'encodage.
 TARGET_PEAK_DBFS = -1.0
 
-#: Loudness intégrée du style `studio` : −16 LUFS, la cible podcast et web.
+#: Loudness intégrée du style `studio` : -16 LUFS, la cible podcast et web.
 STUDIO_LUFS = -16.0
-#: Pic réel maximal du style `studio`, en dBTP (EBU R128 : −1).
+#: Pic réel maximal du style `studio`, en dBTP (EBU R128 : -1).
 STUDIO_TRUE_PEAK = -1.0
 #: Cibles de diffusion : (loudness intégrée LUFS, pic réel max dBTP).
-#: Spotify, YouTube, TIDAL normalisent à −14 ; Apple Podcasts recommande −16 ;
-#: EBU R128 (télévision, radio européennes) impose −23 ; Amazon Music exige −2 dBTP.
+#: Spotify, YouTube, TIDAL normalisent à -14 ; Apple Podcasts recommande -16 ;
+#: EBU R128 (télévision, radio européennes) impose -23 ; Amazon Music exige -2 dBTP.
 LOUDNESS_TARGETS: dict[str, tuple[float, float]] = {
     "podcast": (-16.0, -1.0),
     "apple": (-16.0, -1.0),
@@ -148,7 +148,7 @@ def highpass(samples: list[float], rate: int, cutoff: float, q: float = 0.707) -
 def peaking(
     samples: list[float], rate: int, frequency: float, gain_db: float, q: float = 1.0
 ) -> list[float]:
-    """Égaliseur en cloche : + clarté dans les aigus, − boue dans les graves."""
+    """Égaliseur en cloche : + clarté dans les aigus, - boue dans les graves."""
     amplitude = 10 ** (gain_db / 40)
     w0 = 2 * math.pi * frequency / rate
     cosw0, alpha = math.cos(w0), math.sin(w0) / (2 * q)
@@ -246,8 +246,8 @@ def _k_weighting(samples: list[float], rate: int) -> list[float]:
 def loudness_lufs(samples: list[float], rate: int) -> float:
     """Loudness intégrée d'un signal mono (échelle PCM 16 bits), en LUFS.
 
-    Blocs de 400 ms recouvrants à 75 %, portillon absolu −70 LUFS puis relatif
-    −10 LU : les silences ne tirent pas la mesure vers le bas.
+    Blocs de 400 ms recouvrants à 75 %, portillon absolu -70 LUFS puis relatif
+    -10 LU : les silences ne tirent pas la mesure vers le bas.
     """
     if not samples:
         return LUFS_FLOOR
@@ -300,12 +300,12 @@ _KERNELS = _tp_kernels()
 
 
 def true_peak_dbfs(samples: list[float], rate: int) -> float:
-    """Pic réel (suréchantillonnage ×4), en dBTP.
+    """Pic réel (suréchantillonnage x4), en dBTP.
 
     Un pic réel ne peut dépasser nettement le pic échantillonné qu'à côté d'un
     grand échantillon : on n'interpole qu'autour de ceux-là.
     """
-    del rate  # le facteur ×4 suffit à toute fréquence ≥ 22 050 Hz pour la voix
+    del rate  # le facteur x4 suffit à toute fréquence >= 22 050 Hz pour la voix
     n = len(samples)
     if not n:
         return -90.3
@@ -350,7 +350,7 @@ def deess(
     dominance: float = 0.35,
     max_reduction_db: float = 12.0,
 ) -> list[float]:
-    """Dé-esseur à bande : n'atténue que la zone 5–9 kHz, quand elle domine.
+    """Dé-esseur à bande : n'atténue que la zone 5-9 kHz, quand elle domine.
 
     La bande est réduite quand son enveloppe dépasse `dominance` fois celle du
     signal entier ; le reste du spectre n'est pas touché.
@@ -375,8 +375,8 @@ def _limit(
 ) -> list[float]:
     """Limiteur à anticipation : aucun échantillon ne dépasse `ceiling`.
 
-    Gain requis → minimum glissant sur ±L → moyenne glissante sur L (attaque
-    douce, toujours sous le requis) → relâchement exponentiel.
+    Gain requis -> minimum glissant sur ±L -> moyenne glissante sur L (attaque
+    douce, toujours sous le requis) -> relâchement exponentiel.
     """
     n = len(samples)
     if not n:
@@ -543,8 +543,8 @@ def excite(
     """Excitateur : harmoniques générées à partir des aigus, ajoutées en parallèle.
 
     Redressement double alternance de la bande aiguë : |sin| ne contient que des
-    harmoniques paires (2f, 4f…), aucune fondamentale, donc rien qui s'annule
-    avec le signal d'origine — le principe d'un excitateur « à lampe ».
+    harmoniques paires (2f, 4f...), aucune fondamentale, donc rien qui s'annule
+    avec le signal d'origine - le principe d'un excitateur « à lampe ».
     Présence et brillance sans relever les « s » : après le dé-esseur.
     """
     if not samples or mix <= 0 or cutoff * 2 >= rate / 2 * 0.9:
@@ -689,7 +689,7 @@ def _normalize(
     """Loudness visée, limiteur, pic réel garanti.
 
     1. Plafond du limiteur : 0,5 dB sous la cible de pic réel, abaissé tant que
-       le pic réel mesuré (×4) la dépasse.
+       le pic réel mesuré (x4) la dépasse.
     2. Gain par sécante : la pente loudness/gain chute quand le limiteur
        travaille ; un pas fixe convergerait trop lentement.
     3. Le gain ne dépasse jamais de `MAX_LIMITING_DB` celui qui amène la crête
@@ -736,7 +736,7 @@ def _normalize(
     return values, gain_db
 
 
-#: (fréquence, gain, Q) — appliqués dans cet ordre.
+#: (fréquence, gain, Q) - appliqués dans cet ordre.
 _PRESETS: dict[str, tuple[tuple[tuple[float, float, float], ...], bool]] = {
     "neutre": ((), False),
     "clair": (((3000.0, 2.5, 1.0),), False),

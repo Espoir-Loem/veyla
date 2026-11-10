@@ -1,6 +1,6 @@
-# Veyla — Document de marque
+# Veyla - Document de marque
 
-Version 0.3 · statut : premier chiffre public mesuré, non comparé à une baseline cloud · campagne : `eval/reports/2026-11-01-fleurs100-vosk.md`
+Version 0.3 - statut : premier chiffre public mesuré, non comparé à une baseline cloud - campagne : `eval/reports/2026-11-01-fleurs100-vosk.md`
 Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'est publiée avant d'avoir été mesurée sur un jeu de `eval/CORPUS.md`, jamais sur un corpus de validation.
 
 ---
@@ -9,14 +9,14 @@ Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'e
 
 **La reconnaissance vocale a cessé d'être un service cloud. Elle tient dans 60 Mo, elle tourne sur du matériel déjà acheté, et sa précision n'est plus un compromis.**
 
-Veyla est la couche de parole qui s'exécute sur l'appareil de l'utilisateur final. Pas parce que le cloud est cher — parce que pour l'audio, la machine locale est devenue objectivement meilleure : pas d'aller-retour réseau, pas d'ingestion de données biométriques, pas de facturation à la minute.
+Veyla est la couche de parole qui s'exécute sur l'appareil de l'utilisateur final. Pas parce que le cloud est cher - parce que pour l'audio, la machine locale est devenue objectivement meilleure : pas d'aller-retour réseau, pas d'ingestion de données biométriques, pas de facturation à la minute.
 
 Nous vendons une architecture de référence et sa preuve publique. Nous ne vendons pas du « gratuit » : nous déplaçons le coût vers un matériel qui est déjà payé, et nous le disons.
 
 > **Nom retenu : Veyla** (décision du 2026-11-10, cible internationale). Prononcé
 > « VÉÏ-la », sans approximation en anglais, en français ou en espagnol. Le nom
 > évoque *veil*, le voile : il porte la promesse qui nous distingue des services
-> cloud — la voix ne quitte pas la machine — plutôt que la technique, que tout le
+> cloud - la voix ne quitte pas la machine - plutôt que la technique, que tout le
 > monde revendique. Le V initial rappelle *voice* sans le dire.
 > Vérifié le 2026-11-10 : libre sur PyPI ; aucun produit vocal homonyme trouvé.
 > Réserves assumées : le nom ne dit rien du son, et le dépôt de marque n'est pas
@@ -26,7 +26,7 @@ Nous vendons une architecture de référence et sa preuve publique. Nous ne vend
 >
 > Nom précédent : **Silure**, abandonné le même jour. Trop proche de **Silero**,
 > projet de modèles vocaux open source très diffusé (STT, TTS, VAD) dans notre
-> propre domaine — confusion, référencement et risque d'opposition ; illisible hors
+> propre domaine - confusion, référencement et risque d'opposition ; illisible hors
 > de France ; « silure » renvoie d'abord au poisson. Écartés aussi : Aurio (app macOS
 > de débruitage local existante), Voxa (plusieurs produits vocaux), Sonaro (trop
 > proche de SonoVoice).
@@ -72,11 +72,11 @@ Trois termes testables : *professionnelle* (WER benchmarké publiquement), *sans
 
 Nous ne dirons jamais, même sous pression commerciale :
 
-- « coût 0 $ » → **Réformulé :** coût marginal serveur nul ; coût transféré sur l'appareil de l'utilisateur, chiffré par nous.
-- « temps réel absolu / <10 ms » → **Réformulé :** latence de bout en bout mesurée par appareil, au protocol §6. Le délai d'écriture à l'écran est une latence de décodage autoregressive, pas une taille de tampon audio.
-- « clonage de voix » → **Réformulé :** *clonage zero-shot*, avec l'audio de référence et le consentement qui vont avec. Depuis le 2026-11-10, le clonage est **dans le périmètre produit** (décision du porteur, §12). Il ne se confond pas avec le traitement audio : un égaliseur et un compresseur colorent, ils n'identifient personne. Le clonage suppose un encodeur de locuteur entraîné ; c'est un modèle, pas un filtre, et il passe par le §8.
-- « confidentiel par design, RGPD conforme » → **Réformulé :** aucune donnée audio transitée par nos services, vérifiable par audit. La conformité RGPD est la responsabilité du client en tant que responsable de traitement ; nous fournissons les moyens, pas une certification implicite.
-- « IA libre et légère, sans GPU » → **Réformulé :** nous embarquons des réseaux de neurones compressés. Nous ne cachons pas le neural derrière un vernis DSP.
+- « coût 0 $ » -> **Réformulé :** coût marginal serveur nul ; coût transféré sur l'appareil de l'utilisateur, chiffré par nous.
+- « temps réel absolu / <10 ms » -> **Réformulé :** latence de bout en bout mesurée par appareil, au protocol §6. Le délai d'écriture à l'écran est une latence de décodage autoregressive, pas une taille de tampon audio.
+- « clonage de voix » -> **Réformulé :** *clonage zero-shot*, avec l'audio de référence et le consentement qui vont avec. Depuis le 2026-11-10, le clonage est **dans le périmètre produit** (décision du porteur, §12). Il ne se confond pas avec le traitement audio : un égaliseur et un compresseur colorent, ils n'identifient personne. Le clonage suppose un encodeur de locuteur entraîné ; c'est un modèle, pas un filtre, et il passe par le §8.
+- « confidentiel par design, RGPD conforme » -> **Réformulé :** aucune donnée audio transitée par nos services, vérifiable par audit. La conformité RGPD est la responsabilité du client en tant que responsable de traitement ; nous fournissons les moyens, pas une certification implicite.
+- « IA libre et légère, sans GPU » -> **Réformulé :** nous embarquons des réseaux de neurones compressés. Nous ne cachons pas le neural derrière un vernis DSP.
 
 ### La discipline des claims
 
@@ -126,7 +126,7 @@ réel tourne : Vosk `small-fr`, 65 MiB dépaqué, sans compte ni clé.
 
 **Le premier chiffre citable existe depuis le 2026-11-01**, sur la seule parole humaine
 du dépôt : **WER 21,56 %** (intervalle à 95 % [19,15 ; 24,17]) et **CER 10,57 %** sur
-97 énoncés de `fleurs-fr-test` — 0,287 h, 2 477 mots de référence, trois campagnes,
+97 énoncés de `fleurs-fr-test` - 0,287 h, 2 477 mots de référence, trois campagnes,
 empreinte de normalisation `1ad9ce8f9ca241ce`. Il ne compare rien : la baseline cloud
 sur le même audio n'existe pas encore, et le corpus est la tête d'archive d'un split de
 lecture, pas un échantillon aléatoire. Le rapport
@@ -164,7 +164,7 @@ le white paper était fausse d'un ordre de grandeur (1 777 ms médians, pas 10 m
 
 Règle éditoriale : un chiffre sans protocole n'apparaît ni dans le README, ni sur le
 site, ni dans un pitch. Le rapport JSON fait foi, le tableau markdown n'en est qu'une
-vue. Un rapport marqué `mesure_valide: false` — celui du backend de validation — ne
+vue. Un rapport marqué `mesure_valide: false` - celui du backend de validation - ne
 peut pas être cité, même comme illustration.
 
 ---
@@ -202,7 +202,7 @@ Une bibliothèque de voix sans serveur, sans journal et sans identité est, stru
 
 **Ce qui est dans le produit, pas dans les conditions générales :**
 
-1. **Consentement comme condition de fonction.** Toute capacité de génération vocale exige une preuve de consentement capturée localement et attachée à l'artefact. Sans preuve, la capacité reste désactivée chez nous — pas « déconseillée » chez le client.
+1. **Consentement comme condition de fonction.** Toute capacité de génération vocale exige une preuve de consentement capturée localement et attachée à l'artefact. Sans preuve, la capacité reste désactivée chez nous - pas « déconseillée » chez le client.
 2. **Provenance intégrée à l'artefact.** Marquage + métadonnées de provenance (alignement C2PA / watermark imperceptible) émises par défaut, non retirables par configuration. Un audio que nous avons synthétisé doit rester identifiable comme synthétisé.
 3. **Transparence réglementaire par défaut.** L'obligation de divulgation d'audio synthétique (AI Act, art. 50) est assistée par la bibliothèque, pas renvoyée au client.
 4. **Publication des refus.** Liste en §8.1, écrite avant la demande, pas découverte
@@ -219,8 +219,8 @@ Une bibliothèque de voix sans serveur, sans journal et sans identité est, stru
    une transcription locale ne laisse aucune trace côté serveur, donc aucun tiers ne
    peut la détecter.
 2. **Imitation d'une personne vivante identifiable sans consentement.** Verrouillée
-   par la conception — preuve de consentement locale exigée par le point 1 de la liste
-   précédente — pas par une clause.
+   par la conception - preuve de consentement locale exigée par le point 1 de la liste
+   précédente - pas par une clause.
 3. **Fraude et fabrication de preuve.** Usurpation d'identité, faux témoignage,
    faux document audio remis à une autorité, contournement d'une authentification
    par empreinte vocale.
@@ -269,7 +269,7 @@ Jalons conditionnels : chaque jalon exige la preuve du précédent.
 1. **STT seule.** Un produit, un chiffre, un audit. Le reste est subordonné.
 2. **Runtime & distribution multi-cibles.** La contrainte est la RAM, pas la licence ; l'Android milieu de gamme est le vrai test, pas le laptop.
 3. **Transformation de voix (DSP/neural hybride).** Nommée *transformation*, jamais *clonage*. Sortie accompagnée du protocole de mesure des écarts perceptuels au locuteur cible.
-4. **Génération zero-shot**, uniquement si et seulement si les points 1 et 2 de §8 (preuve de consentement, provenance) sont livrés et vérifiables. Si ce n'est pas le cas, le jalon ne s'ouvre pas — c'est un critère de mort, pas une TODO.
+4. **Génération zero-shot**, uniquement si et seulement si les points 1 et 2 de §8 (preuve de consentement, provenance) sont livrés et vérifiables. Si ce n'est pas le cas, le jalon ne s'ouvre pas - c'est un critère de mort, pas une TODO.
 
 ---
 
@@ -284,7 +284,7 @@ Choix délibéré : nous ne pouvons pas mesurer notre propre usage depuis nos se
 - pic RAM sur la cible la plus basse supportée
 - temps d'intégration jusqu'à la première transcription (friction réelle d'adoption)
 
-**Anti-métriques** — nous ne les optimisons pas, et nous le disons : nombre de téléchargements, taux de croissance de la communauté, tout indicateur qui récompenserait le bruit.
+**Anti-métriques** - nous ne les optimisons pas, et nous le disons : nombre de téléchargements, taux de croissance de la communauté, tout indicateur qui récompenserait le bruit.
 
 ---
 
@@ -293,7 +293,7 @@ Choix délibéré : nous ne pouvons pas mesurer notre propre usage depuis nos se
 Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauvais moment.
 
 - Pas de plateforme, pas de marché de voix, pas de dashboard hébergé. Un dashboard cloud réintroduit exactement ce que nous vendons comme inutile.
-- **Voix standard par défaut, clonage ouvert sous conditions (décision du 2026-11-10).** `veyla say` synthétise avec une voix française standard (Piper `fr_FR-siwis-medium`, 22 050 Hz, locale) — c'est la sortie par défaut, celle qui n'ingère aucun enregistrement personnel. Le porteur a demandé le clonage : il entre dans le périmètre, mais **derrière le §8**, pas à côté. Une voix clonée exige (a) l'audio de référence fourni par la personne ou par son mandataire, (b) une preuve de consentement capturée localement, (c) un marquage synthétique de l'artefact. Tant que ces trois points ne sont pas implémentés, la capacité n'est pas livrée : le §8 reste la condition, pas la documentation. État technique au 2026-11-10 : ZipVoice, le clonage zero-shot de sherpa-onnx, ne couvre que le chinois et l'anglais ; un modèle français (XTTS-v2, F5-TTS fr, OpenVoice v2) demande un autre moteur et une décision de licence. Le WAV produit est déclaré synthétique par la CLI (`--json` : `engine`) ; aucun marquage C2PA n'est encore émis.
+- **Voix standard par défaut, clonage ouvert sous conditions (décision du 2026-11-10).** `veyla say` synthétise avec une voix française standard (Piper `fr_FR-siwis-medium`, 22 050 Hz, locale) - c'est la sortie par défaut, celle qui n'ingère aucun enregistrement personnel. Le porteur a demandé le clonage : il entre dans le périmètre, mais **derrière le §8**, pas à côté. Une voix clonée exige (a) l'audio de référence fourni par la personne ou par son mandataire, (b) une preuve de consentement capturée localement, (c) un marquage synthétique de l'artefact. Tant que ces trois points ne sont pas implémentés, la capacité n'est pas livrée : le §8 reste la condition, pas la documentation. État technique au 2026-11-10 : ZipVoice, le clonage zero-shot de sherpa-onnx, ne couvre que le chinois et l'anglais ; un modèle français (XTTS-v2, F5-TTS fr, OpenVoice v2) demande un autre moteur et une décision de licence. Le WAV produit est déclaré synthétique par la CLI (`--json` : `engine`) ; aucun marquage C2PA n'est encore émis.
 - Pas de multilingue exhaustif au lancement : fr + en, corpus de domaine, puis extension sur preuve.
 - Pas de revendication économique (rentabilité, indépendance, démocratisation) dans le contenu produit. C'est notre motivation, ce n'est pas notre argument de vente.
 - Pas de course aux paramètres. Kokoro à 82 Mo est un meilleur pari qu'un modèle plus gros qu'aucun téléphone ne chargera.
@@ -305,15 +305,15 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 Énoncé pour que la revue critique soit possible sans relire le white paper.
 
 1. **La qualité edge ne tient pas le domaine.** Le WER médical et juridique est la
-   condition d'existence, pas un argument parmi d'autres. Seuils d'acceptation — ce
+   condition d'existence, pas un argument parmi d'autres. Seuils d'acceptation - ce
    sont des décisions, pas des mesures :
 
    | critère | plancher | pourquoi cette valeur |
    |---|---|---|
-   | écart WER, domaine | ≤ **2,0 points** absolus vs le meilleur cloud sur le même corpus | au-delà, le client garde une relecture aussi lourde qu'avec le cloud, et l'échange « confidentialité contre précision » n'a plus d'objet |
-   | écart WER, général | ≤ **4,0 points** | le marché grand public tolère l'imperfection, pas l'inutilité |
-   | pic mémoire, Android milieu de gamme (4 Go) | ≤ **1,2 Go** | au-dessus, le modèle ne cohabite plus avec l'application hôte |
-   | RTF, même cible | ≤ **0,5** | une marge de deux est nécessaire avant que la limitation thermique ne rende la promesse fausse en usage réel |
+   | écart WER, domaine | <= **2,0 points** absolus vs le meilleur cloud sur le même corpus | au-delà, le client garde une relecture aussi lourde qu'avec le cloud, et l'échange « confidentialité contre précision » n'a plus d'objet |
+   | écart WER, général | <= **4,0 points** | le marché grand public tolère l'imperfection, pas l'inutilité |
+   | pic mémoire, Android milieu de gamme (4 Go) | <= **1,2 Go** | au-dessus, le modèle ne cohabite plus avec l'application hôte |
+   | RTF, même cible | <= **0,5** | une marge de deux est nécessaire avant que la limitation thermique ne rende la promesse fausse en usage réel |
 
    Premier signal contraire, et sa correction. Le RTF mesuré sur les douze énoncés de
    synthèse allait de **0,60 à 0,82** ; on en avait conclu que le plancher de 0,5 était
@@ -322,7 +322,7 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
    (médiane 0,50, `eval/reports/2026-11-01-fleurs100-vosk.md`). Les deux mesures sont
    justes et ne disent pas la même chose : sur des énoncés de 2,9 s, le coût fixe par
    énoncé pèse dans le RTF ; sur 10,6 s, il s'amortit. Le plancher desktop est donc
-   atteint par une campagne sur trois, manqué de 30 % par la plus lente — et la cible
+   atteint par une campagne sur trois, manqué de 30 % par la plus lente - et la cible
    mobile reste **non mesurée**. C'est cette dernière mesure, pas le chiffre desktop,
    qui décide si « ça tourne sur ton téléphone » est une phrase publiable.
 
@@ -340,29 +340,29 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 
 | Élément | Statut |
 |---|---|
-| Harnais de mesure — stdlib, manifeste SHA256 | fait : `eval/harness/` |
-| Paquet installable — API `veyla.transcribe` et CLI `veyla transcribe` | fait : `pyproject.toml`, `src/veyla/` |
-| Instrument de mesure — RTF apparié, ponctuation complétée (empreinte `58bbb1e6cbd991c8`) | corrigé le 2026-11-10 : `eval/harness/metrics.py` |
-| Protocole de corpus — jeux, conditions, règles d'exclusion | fait : `eval/CORPUS.md` |
+| Harnais de mesure - stdlib, manifeste SHA256 | fait : `eval/harness/` |
+| Paquet installable - API `veyla.transcribe` et CLI `veyla transcribe` | fait : `pyproject.toml`, `src/veyla/` |
+| Instrument de mesure - RTF apparié, ponctuation complétée (empreinte `58bbb1e6cbd991c8`) | corrigé le 2026-11-10 : `eval/harness/metrics.py` |
+| Protocole de corpus - jeux, conditions, règles d'exclusion | fait : `eval/CORPUS.md` |
 | Nom | tranché : **Veyla** (2026-11-10, remplace Silure, trop proche de Silero), sous réserve d'antériorité |
 | Périmètre v1 | tranché : **STT + TTS voix standard** (`veyla transcribe`, `veyla say`) ; clonage ouvert le 2026-11-10 sous conditions §8, non implémenté (§12) |
 | Clonage zero-shot français | implémenté le 2026-11-10 avec Qwen3-TTS-12Hz-0.6B-Base (français), derrière `--consent` et un fichier de provenance marquant l'artefact comme synthétique : `src/veyla/tts.py` (`QwenCloneEngine`), `veyla clone`. Moteur lourd (~2,3 Go), dépendance optionnelle `veyla[clone]` |
-| Synthèse locale — Piper `fr_FR-siwis-medium`, 67 Mo, sortie 22 050 Hz | fait le 2026-11-10 : `src/veyla/tts.py`, 4,24 s d'audio pour 48 caractères (pic −7,3 dBFS), refus explicite d'un signal muet |
+| Synthèse locale - Piper `fr_FR-siwis-medium`, 67 Mo, sortie 22 050 Hz | fait le 2026-11-10 : `src/veyla/tts.py`, 4,24 s d'audio pour 48 caractères (pic -7,3 dBFS), refus explicite d'un signal muet |
 | Lecture audio | fait le 2026-11-10 : `src/veyla/players.py`, active par défaut (`winsound` Windows, `afplay` macOS, `pw-play`/`paplay`/`aplay`/`ffplay` Linux), échec explicite au lieu du silence |
-| Rendu audio — styles `podcast`, `clair`, `neutre` | fait le 2026-11-10 : `src/veyla/master.py`, DSP sans dépendance (passe-haut, cloche, compression 2:1, crête −1 dBFS). Mesuré : RMS −19,0 → −16,2 dBFS, énergie > 3 kHz 2,6 → 3,8 %, même transcription. Ne change pas le timbre : ce n'est pas du clonage (§12) |
+| Rendu audio - styles `podcast`, `clair`, `neutre` | fait le 2026-11-10 : `src/veyla/master.py`, DSP sans dépendance (passe-haut, cloche, compression 2:1, crête -1 dBFS). Mesuré : RMS -19,0 -> -16,2 dBFS, énergie > 3 kHz 2,6 -> 3,8 %, même transcription. Ne change pas le timbre : ce n'est pas du clonage (§12) |
 | Seuils d'acceptation | fixés : table du §13.1 |
 | Cinq refus d'utilisation | écrits : §8.1 |
 | Backend d'un modèle réel | fait : `vosk-small-fr`, branché dans `harness.backends_vosk` |
 | Corpus FLEURS fr | fait : 100 énoncés, manifeste et provenance au dépôt, audio reconstituable par `eval/tools/prepare_fleurs.py` |
-| Premier chiffre citable | fait : WER 21,56 % [19,15 ; 24,17] sur 97 énoncés, 3 campagnes — `eval/reports/2026-11-01-fleurs100-vosk.md` |
-| Baseline cloud sur le même audio | absente — bloque toute comparaison aux seuils du §13.1 |
+| Premier chiffre citable | fait : WER 21,56 % [19,15 ; 24,17] sur 97 énoncés, 3 campagnes - `eval/reports/2026-11-01-fleurs100-vosk.md` |
+| Baseline cloud sur le même audio | absente - bloque toute comparaison aux seuils du §13.1 |
 | Common Voice fr, corpus spontané | à télécharger ou à négocier |
 | Corpus médical et juridique sous accord de licence | à négocier |
 | Mesures sur les quatre appareils de référence, puis suppression des `[à mesurer]` du présent document | après la baseline ; la cible mobile décide du positionnement |
-| Capture réseau | premier niveau : sonde `netstat` par processus, 0 connexion établie. Ne voit pas une connexion courte entre deux sondes, ni UDP ni DNS — l'audit promis au §6 reste à faire |
+| Capture réseau | premier niveau : sonde `netstat` par processus, 0 connexion établie. Ne voit pas une connexion courte entre deux sondes, ni UDP ni DNS - l'audit promis au §6 reste à faire |
 | Recherche d'antériorité INPI / EUIPO, classes 9 et 42 | avant tout engagement de design |
 
 Ce document contient un chiffre de qualité citable depuis le 2026-11-01 (WER 21,56 % sur
 `fleurs-fr-test`, §6) et **aucun chiffre comparable à un seuil** : la baseline cloud
 manque. La ligne qui bloque n'est plus le corpus général ni le backend, c'est la
-comparaison — et, pour le positionnement, la mesure sur la cible mobile.
+comparaison - et, pour le positionnement, la mesure sur la cible mobile.

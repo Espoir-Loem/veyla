@@ -141,7 +141,7 @@ def voice_like(rate: int = 24000, seconds: float = 3.0) -> list[float]:
 
 class TestLoudness(unittest.TestCase):
     def test_sinus_1khz_pleine_echelle_vaut_moins_3_lufs(self):
-        # ITU-R BS.1770-4 : un sinus 997 Hz à 0 dBFS, mono, mesure −3,01 LUFS.
+        # ITU-R BS.1770-4 : un sinus 997 Hz à 0 dBFS, mono, mesure -3,01 LUFS.
         for rate in (48000, 24000, 22050):
             lufs = master.loudness_lufs(tone_at(rate, 997, 32767, 3.0), rate)
             self.assertAlmostEqual(lufs, -3.01, delta=0.15, msg=f"à {rate} Hz")
@@ -155,7 +155,7 @@ class TestLoudness(unittest.TestCase):
         rate = 24000
         son = tone_at(rate, 997, 8000, 2.0)
         avec_silences = [0.0] * rate * 2 + son + [0.0] * rate * 2
-        # Un moyennage naïf perdrait 10·log10(1/3) = −4,8 dB ; le portillon n'en garde
+        # Un moyennage naïf perdrait 10*log10(1/3) = -4,8 dB ; le portillon n'en garde
         # que l'effet des blocs à cheval sur les transitions (< 1 LU).
         ecart = master.loudness_lufs(son, rate) - master.loudness_lufs(avec_silences, rate)
         self.assertLess(abs(ecart), 1.0)
@@ -166,7 +166,7 @@ class TestLoudness(unittest.TestCase):
 
 class TestTruePeak(unittest.TestCase):
     def test_pic_reel_entre_les_echantillons(self):
-        # Sinus à fs/4 déphasé de 45° : les échantillons valent ±0,707·A, le signal A.
+        # Sinus à fs/4 déphasé de 45° : les échantillons valent ±0,707*A, le signal A.
         rate, amplitude = 24000, 20000
         samples = [amplitude * math.sin(math.pi / 2 * n + math.pi / 4) for n in range(4000)]
         sample_peak = 20 * math.log10(max(abs(x) for x in samples) / 32768)
@@ -242,7 +242,7 @@ def energy(samples: list[float]) -> float:
 class TestExpander(unittest.TestCase):
     def test_baisse_le_bruit_entre_les_phrases_sans_toucher_la_voix(self):
         rate = 24000
-        bruit = [30.0 * math.sin(i * 1.7) for i in range(rate)]  # souffle à −60 dBFS
+        bruit = [30.0 * math.sin(i * 1.7) for i in range(rate)]  # souffle à -60 dBFS
         voix = tone_at(rate, 200, 8000, 1.0)
         out = master.expand(bruit + voix, rate)
         # Mesuré après le maintien et le relâchement (60 + 120 ms), voulus pour
@@ -318,7 +318,7 @@ class TestCiblesDeLoudness(unittest.TestCase):
             self.assertLessEqual(out.true_peak_dbfs, tp + 0.05, msg=cible)
 
     def test_cible_inatteignable_non_forcee(self):
-        # Signal très pointu : −14 LUFS exigerait plus de MAX_LIMITING_DB de
+        # Signal très pointu : -14 LUFS exigerait plus de MAX_LIMITING_DB de
         # limitation. La chaîne rend moins fort plutôt que d'écraser la voix.
         rate = 24000
         out = master.master(master.to_pcm(voice_like(rate)), rate, "studio", loudness="youtube")

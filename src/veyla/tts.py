@@ -212,7 +212,7 @@ class Speech:
 
 
 class Speaker:
-    """Orchestre texte → audio, sans connaître l'implémentation du moteur."""
+    """Orchestre texte -> audio, sans connaître l'implémentation du moteur."""
 
     def __init__(self, engine: TtsEngine) -> None:
         self.engine = engine

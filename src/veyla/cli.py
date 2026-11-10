@@ -80,8 +80,8 @@ def _build_parser() -> argparse.ArgumentParser:
         "--loudness",
         choices=tuple(LOUDNESS_TARGETS),
         default="podcast",
-        help="cible de diffusion : podcast/apple −16, youtube/spotify −14, "
-        "amazon −14 (−2 dBTP), broadcast −23 LUFS (défaut : podcast)",
+        help="cible de diffusion : podcast/apple -16, youtube/spotify -14, "
+        "amazon -14 (-2 dBTP), broadcast -23 LUFS (défaut : podcast)",
     )
     say.add_argument("--json", action="store_true", help="sortie JSON")
 
@@ -157,8 +157,8 @@ def _build_parser() -> argparse.ArgumentParser:
         "--loudness",
         choices=tuple(LOUDNESS_TARGETS),
         default="podcast",
-        help="cible de diffusion : podcast/apple −16, youtube/spotify −14, "
-        "amazon −14 (−2 dBTP), broadcast −23 LUFS (défaut : podcast)",
+        help="cible de diffusion : podcast/apple -16, youtube/spotify -14, "
+        "amazon -14 (-2 dBTP), broadcast -23 LUFS (défaut : podcast)",
     )
     clone.add_argument("--json", action="store_true", help="sortie JSON")
 
@@ -270,7 +270,7 @@ def _say(args, tts_factory, player) -> int:
         lecture = f", lu avec {joue}" if joue else ""
         style = f", style {speech.style}" if speech.style != "neutre" else ""
         print(
-            f"{path} — {speech.duration_s:.2f} s, "
+            f"{path} - {speech.duration_s:.2f} s, "
             f"{args.rate or speech.sample_rate} Hz/{args.bits} bits, "
             f"{speech.lufs:.1f} LUFS, pic réel {speech.true_peak_dbfs:.1f} dBTP{style}{lecture}"
         )
@@ -372,7 +372,7 @@ def _clone_from(args, clone_factory, player, consent, reference) -> int:
         lecture = f", lu avec {joue}" if joue else ""
         style = f", style {speech.style}" if speech.style != "neutre" else ""
         print(
-            f"{path} — {speech.duration_s:.2f} s, "
+            f"{path} - {speech.duration_s:.2f} s, "
             f"{args.rate or speech.sample_rate} Hz/{args.bits} bits, "
             f"{speech.lufs:.1f} LUFS, pic réel {speech.true_peak_dbfs:.1f} dBTP"
             f"{style}{lecture} (provenance : {sidecar})"
@@ -397,7 +397,7 @@ def _setup(args, installer, checker) -> int:
     except VeylaError as exc:
         print(f"veyla: modèles installés, mais l'essai a échoué : {exc}", file=sys.stderr)
         return 1
-    print(f"essai : synthèse puis transcription → « {texte} »")
+    print(f"essai : synthèse puis transcription -> « {texte} »")
     return 0
 
 
@@ -427,7 +427,7 @@ def _play(args, player) -> int:
             )
         )
     else:
-        print(f"{path} — {duration:.2f} s, {rate} Hz, lu avec {joue}")
+        print(f"{path} - {duration:.2f} s, {rate} Hz, lu avec {joue}")
     return 0
 
 

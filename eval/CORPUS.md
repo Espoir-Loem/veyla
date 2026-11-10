@@ -29,10 +29,10 @@ conditions et les règles d'exclusion. Il précède toute rédaction de page pro
 | Jeu | Rôle | Source | Licence |
 |---|---|---|---|
 | **général** | chiffre de référence public, comparable | FLEURS (fr), Mozilla Common Voice (fr) | FLEURS : CC-BY-4.0 (vérifiée sur la fiche du dépôt, tag `license:cc-by-4.0`) ; CV : CC0 |
-| **conversationnel** | tours de parole, hésitations, chevauchements | EPAC — 100 h de journalisme conversationnel français | à confirmer |
+| **conversationnel** | tours de parole, hésitations, chevauchements | EPAC - 100 h de journalisme conversationnel français | à confirmer |
 | **médical** | domaine primaire : vocabulaire, dictée clinicien | corpus de conversations médicales en français (CEA, HAL `cea-04511815`) ; VibraVox (Cnam) pour les captations multi-capteurs | accord requis pour les données de patients |
 | **juridique** | domaine secondaire : prétoire, noms propres, chiffres | benchmark juridique français de Garneau & Bolduc 2024 (`arXiv:2408.11940`) | dérivé d'audiences, redistribution à vérifier |
-| **poste de travail** | condition d'usage réelle du client primaire | ELRA-S0228_77 — français de France, 50 locuteurs, bureau | ELRA, payante pour les membres |
+| **poste de travail** | condition d'usage réelle du client primaire | ELRA-S0228_77 - français de France, 50 locuteurs, bureau | ELRA, payante pour les membres |
 
 Le corpus Earnings-22 est en anglais : il ne figure pas dans le plan fr. Il ne
 deviendrait pertinent que si nous ouvrons un axe « anglais à accents », ce qui n'est
@@ -47,7 +47,7 @@ du produit tombe : le client primaire préfère un service cloud plus juste.
 
 Chaque énoncé du jeu **général** est décliné sur trois axes, publiés séparément :
 
-- **bruit** : propre, 10 dB, 5 dB — mélange MUSAN et RIRS_NOISES (réverbération de
+- **bruit** : propre, 10 dB, 5 dB - mélange MUSAN et RIRS_NOISES (réverbération de
   locaux), niveaux à confirmer licence par licence
 - **capteur** : micro de bureau, microphone de téléphone portable d'entrée de gamme,
   VibraVox pour les transducteurs. Le rapport de latence et de taux change avec le
@@ -58,7 +58,7 @@ Chaque énoncé du jeu **général** est décliné sur trois axes, publiés sép
 
 ## Le problème que ce protocole ne résout pas
 
-Les deux domaines qui nous vendent — médical et juridique — contiennent de la parole
+Les deux domaines qui nous vendent - médical et juridique - contiennent de la parole
 identifiable de personnes réelles. Ces audio ne se redistribuent pas. Donc :
 
 - le chiffre **public** est calculé sur les jeux dont la licence autorise la
@@ -73,11 +73,11 @@ lu comme un chiffre public alors qu'il ne peut pas l'être.
 
 ## Ce qui est constitué, et ce qu'il permet de dire
 
-`corpora/fleurs-fr-test` — 100 énoncés du split `test` de `google/fleurs`, configuration
+`corpora/fleurs-fr-test` - 100 énoncés du split `test` de `google/fleurs`, configuration
 `fr_fr`, commit `70bb2e84b976b7e960aa89f1c648e09c59f894dd`, 0,298 h d'audio, licence
 CC-BY-4.0. Constitué par `tools/prepare_fleurs.py` ; `PROVENANCE.json` conserve le
 sha256 de chaque fichier, le sha256 du TSV des références et l'empreinte du fichier
-source avant conversion float32 → PCM 16 bits.
+source avant conversion float32 -> PCM 16 bits.
 
 Ce que ce jeu autorise et ce qu'il n'autorise pas :
 
@@ -109,9 +109,9 @@ CEA, Garneau & Bolduc et ELRA-S0228_77 restent à négocier.
 | Harnais de mesure | en place, suite exécutable |
 | Agrégat de campagnes répétées (`harness.repeat`) | en place : accord des taux, dispersion des temps, intervalle sur les énoncés |
 | Backend de modèle réel | en place (`vosk-small-fr`), chargé et mesuré en local |
-| `demo` (4 énoncés sinusoïdaux) | en place — valide le pipeline, ne mesure rien |
-| `synth-fr` (12 énoncés TTS) | en place — validation de pipeline, une seule voix |
-| `fleurs-fr-test` (100 énoncés) | **en place** — premier chiffre citable : WER 21,56 %, 3 campagnes, [rapport](reports/2026-11-01-fleurs100-vosk.md) |
+| `demo` (4 énoncés sinusoïdaux) | en place - valide le pipeline, ne mesure rien |
+| `synth-fr` (12 énoncés TTS) | en place - validation de pipeline, une seule voix |
+| `fleurs-fr-test` (100 énoncés) | **en place** - premier chiffre citable : WER 21,56 %, 3 campagnes, [rapport](reports/2026-11-01-fleurs100-vosk.md) |
 | Common Voice fr, EPAC, médicaux, juridiques, poste de travail | à constituer ou à négocier |
 | Baseline cloud sur le même audio | absente : sans elle, un taux ne compare rien |
 | Variante de français autre que fr-FR | absente : la règle 3 n'est pas testable pour l'instant |

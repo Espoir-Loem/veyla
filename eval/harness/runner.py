@@ -57,7 +57,7 @@ def _from_manifest(corpus_dir: Path, axes: tuple[str, ...]) -> list[Utterance]:
         unknown = [c for c in header if c not in known]
         if unknown:
             raise SystemExit(
-                f"{MANIFEST_NAME} : colonnes inconnues {unknown} — déclare-les comme axes avec "
+                f"{MANIFEST_NAME} : colonnes inconnues {unknown} - déclare-les comme axes avec "
                 f"--axes {','.join(tuple(axes) + tuple(unknown))}, ou retire-les du manifeste"
             )
         absent = [c for c in BASE_COLUMNS + axes if c not in header]
@@ -218,7 +218,7 @@ def run(backend_name: str, corpus_dir: Path, model_dir: Path | None,
 def render_markdown(report: dict) -> str:
     agg = report["agrégats"]
     lines = [
-        f"# Rapport — backend `{report['backend']}`",
+        f"# Rapport - backend `{report['backend']}`",
         "",
         f"mesure exploitable : **{report['mesure_valide']}**",
     ]

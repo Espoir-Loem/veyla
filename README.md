@@ -1,13 +1,13 @@
 # Veyla
 
-Bibliothèque vocale exécutée sur l'appareil de l'utilisateur : audio → texte, et
-texte → audio. Pas de serveur de calcul, parce que l'audio du client primaire (santé,
-justice) n'a rien à y faire — pas parce que l'hébergement est cher.
+Bibliothèque vocale exécutée sur l'appareil de l'utilisateur : audio -> texte, et
+texte -> audio. Pas de serveur de calcul, parce que l'audio du client primaire (santé,
+justice) n'a rien à y faire - pas parce que l'hébergement est cher.
 
 **État : un premier chiffre citable existe, et il ne compare rien.** Vosk `small-fr`,
 65 MiB, WER de **21,56 %** sur 97 énoncés de parole humaine (`fleurs-fr-test`, 0,287 h,
 3 campagnes, intervalle à 95 % [19,15 ; 24,17]). Le chiffre est citable ; l'écart au
-cloud ne l'est pas — la baseline sur le même audio n'existe pas. Le rapport
+cloud ne l'est pas - la baseline sur le même audio n'existe pas. Le rapport
 (`eval/reports/2026-11-01-fleurs100-vosk.md`) dit ce que le jeu autorise et ce qu'il
 n'autorise pas. Les campagnes antérieures sur voix de synthèse
 (`2026-11-01-vosk-smoke.md`) restent une validation de pipeline, pas un résultat.
@@ -20,6 +20,7 @@ n'autorise pas. Les campagnes antérieures sur voix de synthèse
 | `eval/README.md` | harnais de mesure : ce qu'il calcule, ce qu'il refuse de publier, comment ajouter un modèle |
 | `eval/CORPUS.md` | jeux de test, conditions de bruit/capteur/longueur, règles d'exclusion |
 | `docs/dev.md` | méthode de développement : TDD d'abord, SOLID et KISS appliqués à ce dépôt |
+| `docs/signes-ia.md` | ce qui fait reconnaître un travail généré par IA (caractères, tournures, code, commits, design, voix) ; les caractères sont vérifiés par `tests/test_style.py` |
 
 ## Démarrage depuis un clone neuf
 
@@ -94,32 +95,32 @@ Le moteur rend un signal brut ; `--style` applique un traitement mesurable, sur 
 | style | traitement | usage |
 |---|---|---|
 | `studio` (défaut) | chaîne voix complète (ci-dessous), couleur légère | naturel et propre : la référence pour la voix parlée |
-| `radio` | même chaîne, +2 dB à 120 Hz (proximité), −3 dB à 350 Hz, +3 dB à 3,5 kHz, compression 4:1, compression parallèle 35 %, saturation 20 % | voix dense et présente, type antenne |
+| `radio` | même chaîne, +2 dB à 120 Hz (proximité), -3 dB à 350 Hz, +3 dB à 3,5 kHz, compression 4:1, compression parallèle 35 %, saturation 20 % | voix dense et présente, type antenne |
 | `chaud` | même chaîne, +2 dB à 180 Hz (corps), aigus adoucis, saturation paire 20 % | voix douce et ronde, narration |
-| `podcast` | passe-haut 70 Hz, −1,5 dB à 250 Hz, +2,5 dB à 3 kHz, compression 2:1, crête ramenée à −1 dBFS | écoute confortable, niveau homogène |
-| `clair` | passe-haut 70 Hz, +2,5 dB à 3 kHz, crête à −1 dBFS | plus de présence, sans compression |
+| `podcast` | passe-haut 70 Hz, -1,5 dB à 250 Hz, +2,5 dB à 3 kHz, compression 2:1, crête ramenée à -1 dBFS | écoute confortable, niveau homogène |
+| `clair` | passe-haut 70 Hz, +2,5 dB à 3 kHz, crête à -1 dBFS | plus de présence, sans compression |
 | `neutre` | aucun filtre, aucun changement de niveau | mesure, comparaison, archivage |
 
 Mesures sur la même phrase (2,7 s), trois rendus successifs :
 
 | style | crête | RMS | crête/RMS | énergie > 3 kHz |
 |---|---|---|---|---|
-| `neutre` | −4,6 dBFS | −19,0 dBFS | 14,4 dB | 2,6 % |
-| `clair` | −1,0 dBFS | −16,6 dBFS | 15,6 dB | 3,0 % |
-| `podcast` | −1,0 dBFS | −16,2 dBFS | 15,2 dB | 3,8 % |
+| `neutre` | -4,6 dBFS | -19,0 dBFS | 14,4 dB | 2,6 % |
+| `clair` | -1,0 dBFS | -16,6 dBFS | 15,6 dB | 3,0 % |
+| `podcast` | -1,0 dBFS | -16,2 dBFS | 15,2 dB | 3,8 % |
 
 La chaîne voix (`studio`, `radio`, `chaud`) suit l'ordre recommandé par les guides
 de mixage voix et les forums d'ingénieurs du son :
 
-1. **nettoyage** — silences de tête/queue retirés, fondus de 10 ms ; passe-haut
+1. **nettoyage** - silences de tête/queue retirés, fondus de 10 ms ; passe-haut
    80 Hz 24 dB/oct ; **anti-plosives** (coups de grave soudains des « p », « b »
    écrasés, fondamental stable épargné) ; **expandeur** 1:3 sous le bruit de fond
-   (souffle et respirations baissés jusqu'à −18 dB, maintien 60 ms pour ne pas
-   couper les fins de mots — plus doux qu'une porte) ;
+   (souffle et respirations baissés jusqu'à -18 dB, maintien 60 ms pour ne pas
+   couper les fins de mots - plus doux qu'une porte) ;
 2. **égalisation soustractive**, puis **dé-esseur léger** avant compression ;
-3. **compression** (3:1 ou 4:1, attaque 5 ms), puis **dé-esseur principal** — la
+3. **compression** (3:1 ou 4:1, attaque 5 ms), puis **dé-esseur principal** - la
    compression fait ressortir les « s » ;
-4. **couleur** — saturation parallèle type lampe (harmoniques paires) et
+4. **couleur** - saturation parallèle type lampe (harmoniques paires) et
    **excitateur** sur les aigus (redressement : harmoniques paires seulement, rien
    qui s'annule avec la voix), après le dé-esseur ;
 5. **égalisation de tonalité** (présence, air), **compression parallèle**
@@ -132,19 +133,19 @@ de mixage voix et les forums d'ingénieurs du son :
 
 | cible | loudness | pic réel | pour |
 |---|---|---|---|
-| `podcast` (défaut), `apple` | −16 LUFS | −1 dBTP | Apple Podcasts, web |
-| `youtube`, `spotify` | −14 LUFS | −1 dBTP | YouTube, Spotify, TIDAL |
-| `amazon` | −14 LUFS | −2 dBTP | Amazon Music |
-| `broadcast` | −23 LUFS | −1 dBTP | télévision et radio (EBU R128) |
+| `podcast` (défaut), `apple` | -16 LUFS | -1 dBTP | Apple Podcasts, web |
+| `youtube`, `spotify` | -14 LUFS | -1 dBTP | YouTube, Spotify, TIDAL |
+| `amazon` | -14 LUFS | -2 dBTP | Amazon Music |
+| `broadcast` | -23 LUFS | -1 dBTP | télévision et radio (EBU R128) |
 
 Mesuré sur quatre voix réelles (deux Piper du corpus, une Piper fraîche, le clone
-Qwen) : les 48 combinaisons caractère × cible tombent à ±0,2 LU de la cible, pic
+Qwen) : les 48 combinaisons caractère x cible tombent à ±0,2 LU de la cible, pic
 réel tenu, en moins d'une seconde chacune. La transcription Vosk est identique en
 `neutre`, `studio`, `radio` et `chaud`.
 
 `--rate 48000 --bits 24` écrit le format d'échange des logiciels de montage (MAO,
 vidéo) : rééchantillonnage par sinc fenêtré (Blackman, sans repliement), 24 bits.
-Le 24 bits n'ajoute pas de précision — le moteur rend du 16 bits — il évite une
+Le 24 bits n'ajoute pas de précision - le moteur rend du 16 bits - il évite une
 perte de plus dans la chaîne de montage. Revenir en 16 bits après
 rééchantillonnage applique un dither TPDF.
 
@@ -153,11 +154,11 @@ Loudness et pic réel, mesurés par le même code (`veyla.master.loudness_lufs`,
 
 | entrée | `neutre` | `podcast` | `studio` |
 |---|---|---|---|
-| Piper, 3,6 s | −21,3 LUFS, −6,9 dBTP | −17,6 LUFS, **−1,0 dBTP** | −16,1 LUFS, −1,4 dBTP |
-| clone Qwen, 3,4 s | −16,6 LUFS, −1,0 dBTP | −16,6 LUFS, −1,0 dBTP | −16,0 LUFS, −1,4 dBTP |
+| Piper, 3,6 s | -21,3 LUFS, -6,9 dBTP | -17,6 LUFS, **-1,0 dBTP** | -16,1 LUFS, -1,4 dBTP |
+| clone Qwen, 3,4 s | -16,6 LUFS, -1,0 dBTP | -16,6 LUFS, -1,0 dBTP | -16,0 LUFS, -1,4 dBTP |
 
 `podcast` normalise la crête des échantillons, pas le pic réel : entre deux
-échantillons le signal peut dépasser −1 dBTP (−0,89 mesuré sur un signal de test),
+échantillons le signal peut dépasser -1 dBTP (-0,89 mesuré sur un signal de test),
 et un encodeur MP3/AAC écrêtera. `studio` mesure le pic réel et garantit la marge.
 Le traitement prend 0,3 s pour 3,5 s d'audio, en Python pur. `say` et `clone`
 affichent la loudness et le pic réel de chaque fichier écrit.
@@ -183,7 +184,7 @@ choisit seule son backend selon la plateforme, sans dépendance obligatoire :
 
 Sous Linux, l'ordre compte : `pw-play` et `paplay` passent par le mixeur de session et
 suivent la sortie choisie dans le bureau ; `aplay` parle à ALSA en direct et son
-périphérique par défaut peut être `null` — il rend alors `0` en jetant le son. C'est
+périphérique par défaut peut être `null` - il rend alors `0` en jetant le son. C'est
 précisément le cas qui donnait « aucun son » alors que le WAV cliquait très bien.
 
 Si aucun lecteur n'existe ou si tous échouent, la commande le dit avec le code exact et
@@ -194,7 +195,7 @@ Sous Windows PowerShell, remplacer les deux lignes de téléchargement par
 `Invoke-WebRequest <url> -OutFile siwis.tar.bz2` puis `tar -xf siwis.tar.bz2 -C models`.
 
 Sortie mesurée sur cette machine pour la phrase de démonstration (48 caractères) :
-**4,24 s à 22 050 Hz, pic −7,3 dBFS, 95 % d'échantillons non nuls**, et le WAV relu par
+**4,24 s à 22 050 Hz, pic -7,3 dBFS, 95 % d'échantillons non nuls**, et le WAV relu par
 `veyla transcribe` rend la phrase. Un moteur qui rendrait un signal muet lève
 `SilentSynthesis` et **n'écrit aucun fichier** : c'est le contrat, pas un warning.
 
@@ -219,7 +220,7 @@ printf '{"subject":"...","granted_by":"...","statement":"..."}' > consent.json
   --consent consent.json --out clone.wav
 ```
 
-La référence peut aussi être un fichier audio ou vidéo (MP3, M4A, MP4…) ou une URL de
+La référence peut aussi être un fichier audio ou vidéo (MP3, M4A, MP4...) ou une URL de
 vidéo, avec la dépendance optionnelle `veyla[url]` (yt-dlp et un ffmpeg embarqué) :
 
 ```bash
@@ -230,7 +231,7 @@ uv pip install -e ".[url]"
 ```
 
 La référence est nettoyée à la conversion (passe-haut 80 Hz, débruitage léger
-`afftdn` de 12 dB au plus, niveau à −20 LUFS) : le clone reproduit ce qu'il entend.
+`afftdn` de 12 dB au plus, niveau à -20 LUFS) : le clone reproduit ce qu'il entend.
 `--isolate-voice` sépare la voix de la musique de fond avec Demucs (`htdemucs`,
 ~80 Mo téléchargés au premier usage, ~1 Go de RAM, `uv pip install -e ".[isolate]"`),
 sur la source brute avant découpe. Mesuré sur une voix mêlée à un accord et une

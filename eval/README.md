@@ -46,7 +46,7 @@ Trois dispositions existent pour qu'un rapport ne puisse pas être cité à tort
 2. **Pas de pic mémoire inventé.** Un backend exécuté en sous-processus échappe à la
    sonde : le harnais écrit `peak_rss_bytes: null` avec la raison, au lieu de publier
    le pic du processus parent qui surestimerait ou sous-estimerait au hasard. Couvrir
-   un sous-processus demande un Job Object Windows — non implémenté.
+   un sous-processus demande un Job Object Windows - non implémenté.
 3. **Pas de durée devinée.** Seuls les WAV PCM ont une durée lisible ici. Un autre
    conteneur donne `audio_duration_s: null` et le RTF est abstenu.
 
@@ -57,10 +57,10 @@ varie d'une exécution à l'autre alors que le taux, lui, est déterministe. Sur
 de 0,44 à 0,65, parce que le coût fixe par énoncé s'amortit sur des segments plus longs.
 Publier une latence sans dispersion, c'est publier le meilleur jour de la machine.
 `harness.repeat` (cf. § Campagnes répétées) existe pour ça : un nombre de temps n'a de
-sens qu'avec le compte des campagnes qui l'ont produit — et qu'avec la longueur des
+sens qu'avec le compte des campagnes qui l'ont produit - et qu'avec la longueur des
 segments qui l'ont produit.
 
-## Normalisation — et ce qu'elle écrase
+## Normalisation - et ce qu'elle écrase
 
 `harness.metrics.normalize_fr` : NFKC, minuscules, apostrophes typographiques unifiées,
 ponctuation supprimée, espaces non typographiques convertis, élisions rejointes
@@ -82,7 +82,7 @@ d'une seule ligne de pourcentage.
 
 Cette classification n'est pas une précaution théorique : mesurée sur le premier corpus
 de parole humaine (`fleurs-fr-test`, 97 énoncés, Vosk `small-fr`), les 24 énoncés dont
-la référence écrit un nombre en chiffres — un quart du corpus et 24,8 % des mots —
+la référence écrit un nombre en chiffres - un quart du corpus et 24,8 % des mots -
 portent **38 % de la masse d'erreur**. WER 33,01 % sur ces énoncés, 17,78 % sur les
 autres. La cause tient en une ligne : le modèle dit « mille neuf cent soixante-six »,
 la référence écrit `1966`, et la normalisation ne réconcilie pas les deux. Le 21,56 %
@@ -97,8 +97,8 @@ n'existe ([rapport](reports/2026-11-01-normalisation-point-oublie.md)).
 
 Empreinte courante : **`58bbb1e6cbd991c8`**. Elle diffère de `1ad9ce8f9ca241ce`
 (2026-11-01) parce que deux caractères manquaient au jeu de ponctuation : l'ellipsis
-`…` (U+2026) et l'accent circonflexe isolé `^` (0x5E). Comptés comme du texte, ils
-auraient transformé « attends… » en un mot différent de « attends » — exactement la
+`...` (U+2026) et l'accent circonflexe isolé `^` (0x5E). Comptés comme du texte, ils
+auraient transformé « attends... » en un mot différent de « attends » - exactement la
 classe de défaut du point oublié. Aucun corpus actuel n'en contient (vérifié : 0
 occurrence), et le recalcul des hypothèses stockées redonne les mêmes WER, CER et RTF.
 Les manifestes du 2026-11-01 conservent leur empreinte d'origine : ce sont les traces
@@ -106,15 +106,15 @@ du code qui les a produits, pas des fichiers à réécrire.
 
 ## Formats de corpus acceptés
 
-- `manifest.tsv` — en-tête obligatoire. Colonnes de base : `utt_id`, `audio`,
+- `manifest.tsv` - en-tête obligatoire. Colonnes de base : `utt_id`, `audio`,
   `transcript`. Toute autre colonne est un **axe** et doit être déclarée :
-  `--axes domaine,genre,locuteur`. Une colonne non déclarée fait échouer la campagne —
+  `--axes domaine,genre,locuteur`. Une colonne non déclarée fait échouer la campagne -
   un champ reconnu mais non déclaré est une condition de test qui serait perdue en
-  silence — et le message d'erreur propose la liste `--axes` qui l'accepterait.
+  silence - et le message d'erreur propose la liste `--axes` qui l'accepterait.
   Un axe déclaré qui n'est pas dans le manifeste échoue aussi, et une ligne dont le
   nombre de champs ne correspond pas à l'en-tête échoue : une tabulation avalée par une
   transcription décalerait tout le reste sans aucun message.
-- mode sans manifeste — `x.wav` avec `x.txt` à côté ; une référence manquante arrête
+- mode sans manifeste - `x.wav` avec `x.txt` à côté ; une référence manquante arrête
   tout plutôt que d'écarter des énoncés en silence. Les axes existent alors, mais
   valent tous `non-rens.` : un rapport sans métadonnée doit le dire, pas l'inventer.
 
@@ -124,8 +124,8 @@ Un axe qui ne prend qu'une valeur sur tout le corpus ne produit pas de tableau :
 ## Campagnes répétées
 
 Une campagne = un processus. `harness.repeat` en relance K dans des exécutables
-distincts — sinon la deuxième campagne hériterait du modèle déjà résident de la
-première et publierait un pic mémoire faux — et rend deux choses séparées :
+distincts - sinon la deuxième campagne hériterait du modèle déjà résident de la
+première et publierait un pic mémoire faux - et rend deux choses séparées :
 
 - **accord des taux** entre campagnes : le modèle est-il déterministe ici ;
 - **dispersion des temps** entre campagnes : la machine est-elle mesurable.
@@ -157,7 +157,7 @@ La découverte est tolérante par nécessité : `backends_vosk.py` s'importe ave
 bibliothèque standard et ne réclame `vosk` que dans `load()`. Un module dont la
 dépendance manque est donc chargeable, visible dans `--backend`, et son échec porte
 l'installation à demander. Un module qui casse à l'import, lui, est consigné dans
-`IMPORT_ERRORS` et nommé dans le message d'erreur d'un `--backend` inconnu — il ne
+`IMPORT_ERRORS` et nommé dans le message d'erreur d'un `--backend` inconnu - il ne
 supprime pas silencieusement le reste du registre.
 
 `model_files` alimente le manifeste : empreinte SHA256 et taille de chaque fichier de

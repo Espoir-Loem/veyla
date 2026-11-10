@@ -104,7 +104,7 @@ def to_pcm16(mono: dict, name: str) -> tuple[bytes, str]:
 
     FLEURS livre du float 32 bits (tag 3) : le module wave refuse de l'ouvrir, et un
     backend qui ne lit que du PCM n'aurait rien à transcrire. La conversion ne touche
-    que le type d'échantillon — ni rééchantillonnage, ni rognage de durée.
+    que le type d'échantillon - ni rééchantillonnage, ni rognage de durée.
     """
     fmt = mono["fmt"]
     if fmt["num_channels"] != 1:

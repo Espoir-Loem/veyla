@@ -180,7 +180,7 @@ def _ms(v):
 
 
 def render_markdown(agg: dict) -> str:
-    lignes = [f"# Agrégat — {agg['campagnes']} campagne(s), backend `{agg['backend']}`", "",
+    lignes = [f"# Agrégat - {agg['campagnes']} campagne(s), backend `{agg['backend']}`", "",
               f"mesure exploitable : **{agg['mesure_valide']}**", f"corpus : `{agg['corpus']}`"]
     if agg.get("avertissement"):
         lignes += ["", f"> {agg['avertissement']}"]
@@ -204,7 +204,7 @@ def render_markdown(agg: dict) -> str:
                           f"({agg['bootstrap']['reprises']} réechantillonnages, "
                           f"graine {agg['bootstrap']['graine']})")
         else:
-            lignes.append(f"- {nom.upper()} : intervalle non calculé — {intervalle['motif']}")
+            lignes.append(f"- {nom.upper()} : intervalle non calculé - {intervalle['motif']}")
 
     lignes += ["", "## Dispersion des temps entre campagnes", "",
                "| indicateur | min | médiane | max | identique |", "|---|---|---|---|---|"]

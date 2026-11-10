@@ -39,7 +39,7 @@ REFERENCE_FILTERS = (
 )
 """Nettoyage de la référence : grondement < 80 Hz retiré, clics de bouche réparés
 (`adeclick`), souffle réduit de 12 dB
-au plus (léger, pour ne pas abîmer le timbre à cloner), niveau ramené à −20 LUFS.
+au plus (léger, pour ne pas abîmer le timbre à cloner), niveau ramené à -20 LUFS.
 Le clone reproduit ce qu'il entend : une référence propre donne un clone propre."""
 
 

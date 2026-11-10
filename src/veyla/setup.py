@@ -172,7 +172,7 @@ def install(
             log(f"{name} : déjà présent ({target})")
             results.append(Result(name, target, "déjà présent"))
             continue
-        log(f"{name} : téléchargement ({model.size})…")
+        log(f"{name} : téléchargement ({model.size})...")
         with tempfile.TemporaryDirectory(prefix=f".{name}-", dir=root) as tmp:
             work = Path(tmp)
             if model.repo_id:

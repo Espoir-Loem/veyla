@@ -114,7 +114,7 @@ def resample_pcm16(frames: bytes, source_rate: int, target_rate: int) -> bytes:
     """Ramène des échantillons PCM 16 bits à `target_rate`.
 
     Réduction : moyenne glissante de largeur `source_rate // target_rate` avant
-    décimation — un filtre passe-bas du premier ordre, pas une décimation nue, dont la
+    décimation - un filtre passe-bas du premier ordre, pas une décimation nue, dont la
     réponse est médiocre près de la bande passante mais qui empêche le repliement des
     fréquences hautes dans la bande utile.
 
