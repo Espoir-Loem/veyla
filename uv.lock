@@ -3700,64 +3700,6 @@ wheels = [
 ]
 
 [[package]]
-name = "silure"
-version = "0.2.0"
-source = { editable = "." }
-
-[package.optional-dependencies]
-clone = [
-    { name = "qwen-tts" },
-    { name = "soundfile" },
-    { name = "torch", version = "2.14.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform == 'darwin'" },
-    { name = "torch", version = "2.14.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
-    { name = "torch", version = "2.15.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform == 'darwin'" },
-    { name = "torch", version = "2.15.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "torchaudio", version = "2.11.1", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
-    { name = "torchaudio", version = "2.11.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
-]
-isolate = [
-    { name = "demucs", version = "4.0.1", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
-    { name = "demucs", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine != 'x86_64' or sys_platform != 'darwin'" },
-]
-tts = [
-    { name = "sherpa-onnx" },
-    { name = "sherpa-onnx-core" },
-]
-url = [
-    { name = "imageio-ffmpeg" },
-    { name = "yt-dlp", version = "2026.10.21", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "yt-dlp", version = "2026.10.26", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-vosk = [
-    { name = "vosk" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "demucs", marker = "extra == 'isolate'", specifier = ">=4.0" },
-    { name = "imageio-ffmpeg", marker = "extra == 'url'", specifier = ">=0.5" },
-    { name = "qwen-tts", marker = "extra == 'clone'", specifier = ">=0.1" },
-    { name = "sherpa-onnx", marker = "extra == 'tts'", specifier = ">=1.13,<2" },
-    { name = "sherpa-onnx-core", marker = "extra == 'tts'", specifier = ">=1.13,<2" },
-    { name = "soundfile", marker = "extra == 'clone'", specifier = ">=0.12" },
-    { name = "torch", marker = "sys_platform == 'darwin' and extra == 'clone'", specifier = ">=2.0" },
-    { name = "torch", marker = "sys_platform != 'darwin' and extra == 'clone'", specifier = ">=2.0", index = "https://download.pytorch.org/whl/cpu" },
-    { name = "torchaudio", marker = "sys_platform == 'darwin' and extra == 'clone'", specifier = ">=2.0" },
-    { name = "torchaudio", marker = "sys_platform != 'darwin' and extra == 'clone'", specifier = ">=2.0", index = "https://download.pytorch.org/whl/cpu" },
-    { name = "vosk", marker = "extra == 'vosk'", specifier = ">=0.3.45" },
-    { name = "yt-dlp", marker = "extra == 'url'", specifier = ">=2025.1" },
-]
-provides-extras = ["vosk", "tts", "clone", "url", "isolate"]
-
-[package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.17" }]
-
-[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -4328,6 +4270,64 @@ sdist = { url = "https://files.pythonhosted.org/packages/da/34/30e9280707135d2cf
 wheels = [
     { url = "https://files.pythonhosted.org/packages/38/0c/b54a4fdd7f90a3af8b02ebc9ce6712c2c208b7926a2f7bad95c33ebbe943/uvicorn-0.54.0-py3-none-any.whl", hash = "sha256:505bdb0f318731d45f1f712071fc781a8981f6847a31c902c9f5e652d4f67faf", size = 87427, upload-time = "2026-09-25T06:52:35.829Z" },
 ]
+
+[[package]]
+name = "veyla"
+version = "0.2.0"
+source = { editable = "." }
+
+[package.optional-dependencies]
+clone = [
+    { name = "qwen-tts" },
+    { name = "soundfile" },
+    { name = "torch", version = "2.14.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform == 'darwin'" },
+    { name = "torch", version = "2.14.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
+    { name = "torch", version = "2.15.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform == 'darwin'" },
+    { name = "torch", version = "2.15.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
+    { name = "torchaudio", version = "2.11.1", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
+    { name = "torchaudio", version = "2.11.1+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
+]
+isolate = [
+    { name = "demucs", version = "4.0.1", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
+    { name = "demucs", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "platform_machine != 'x86_64' or sys_platform != 'darwin'" },
+]
+tts = [
+    { name = "sherpa-onnx" },
+    { name = "sherpa-onnx-core" },
+]
+url = [
+    { name = "imageio-ffmpeg" },
+    { name = "yt-dlp", version = "2026.10.21", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "yt-dlp", version = "2026.10.26", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+vosk = [
+    { name = "vosk" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "demucs", marker = "extra == 'isolate'", specifier = ">=4.0" },
+    { name = "imageio-ffmpeg", marker = "extra == 'url'", specifier = ">=0.5" },
+    { name = "qwen-tts", marker = "extra == 'clone'", specifier = ">=0.1" },
+    { name = "sherpa-onnx", marker = "extra == 'tts'", specifier = ">=1.13,<2" },
+    { name = "sherpa-onnx-core", marker = "extra == 'tts'", specifier = ">=1.13,<2" },
+    { name = "soundfile", marker = "extra == 'clone'", specifier = ">=0.12" },
+    { name = "torch", marker = "sys_platform == 'darwin' and extra == 'clone'", specifier = ">=2.0" },
+    { name = "torch", marker = "sys_platform != 'darwin' and extra == 'clone'", specifier = ">=2.0", index = "https://download.pytorch.org/whl/cpu" },
+    { name = "torchaudio", marker = "sys_platform == 'darwin' and extra == 'clone'", specifier = ">=2.0" },
+    { name = "torchaudio", marker = "sys_platform != 'darwin' and extra == 'clone'", specifier = ">=2.0", index = "https://download.pytorch.org/whl/cpu" },
+    { name = "vosk", marker = "extra == 'vosk'", specifier = ">=0.3.45" },
+    { name = "yt-dlp", marker = "extra == 'url'", specifier = ">=2025.1" },
+]
+provides-extras = ["vosk", "tts", "clone", "url", "isolate"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "ruff", specifier = ">=0.17" }]
 
 [[package]]
 name = "vosk"

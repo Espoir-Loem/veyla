@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from test_tts import RATE, ToneEngine, tone  # noqa: E402
 
-from silure import asr, cli, fetch, tts  # noqa: E402
+from veyla import asr, cli, fetch, tts  # noqa: E402
 
 
 class TestIsUrl(unittest.TestCase):

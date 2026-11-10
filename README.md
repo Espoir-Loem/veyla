@@ -1,4 +1,4 @@
-# Silure
+# Veyla
 
 Bibliothèque vocale exécutée sur l'appareil de l'utilisateur : audio → texte, et
 texte → audio. Pas de serveur de calcul, parce que l'audio du client primaire (santé,
@@ -24,18 +24,18 @@ n'autorise pas. Les campagnes antérieures sur voix de synthèse
 ## Démarrage depuis un clone neuf
 
 Les modèles ne sont pas dans git (`models/` est ignoré) : un clone neuf installe le
-code, puis `silure setup` télécharge ce qu'il utilise. Vérifié sur un clone propre (Linux,
+code, puis `veyla setup` télécharge ce qu'il utilise. Vérifié sur un clone propre (Linux,
 Python 3.13) : 125 tests passent, `say` et `transcribe` fonctionnent.
 
 ```bash
-git clone https://github.com/Espoir-Loem/voice.git && cd voice
+git clone https://github.com/Espoir-Loem/veyla.git && cd veyla
 uv sync --all-extras              # ~1,9 Go : torch CPU, sans CUDA ; ou --extra tts --extra vosk
-.venv/bin/silure setup            # Vosk + Piper (~105 Mo), puis essai réel
-.venv/bin/silure setup --clone    # + Qwen3-TTS pour le clonage (2,4 Go)
-.venv/bin/silure say "Bonjour, ceci est la voix de Silure."
+.venv/bin/veyla setup            # Vosk + Piper (~105 Mo), puis essai réel
+.venv/bin/veyla setup --clone    # + Qwen3-TTS pour le clonage (2,4 Go)
+.venv/bin/veyla say "Bonjour, ceci est la voix de Veyla."
 ```
 
-`silure setup` télécharge chaque modèle dans `models/`, vérifie que l'archive est
+`veyla setup` télécharge chaque modèle dans `models/`, vérifie que l'archive est
 complète et ne sort pas du dossier, l'installe d'un coup (une coupure ne laisse
 jamais un modèle à moitié en place), et saute ce qui est déjà présent. Il finit
 par un essai réel : il synthétise « Bonjour, tout est prêt. » et le fait relire par
@@ -54,13 +54,13 @@ dépendance optionnelle.
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .          # Windows : .venv/Scripts/python.exe
 .venv/bin/python -m pip install -e ".[vosk]"
-.venv/bin/silure transcribe prise.wav          # Windows : .venv\\Scripts\\silure.exe
+.venv/bin/veyla transcribe prise.wav          # Windows : .venv\\Scripts\\veyla.exe
 ```
 
 Le modèle se cherche dans `models/vosk-model-small-fr-0.22`, puis dans
-`SILURE_VOSK_MODEL`, puis dans `--model`. S'il manque, la commande le dit et donne
-l'adresse de téléchargement, sans traceback. `import silure` expose la même opération :
-`silure.transcribe("prise.wav").text`.
+`VEYLA_VOSK_MODEL`, puis dans `--model`. S'il manque, la commande le dit et donne
+l'adresse de téléchargement, sans traceback. `import veyla` expose la même opération :
+`veyla.transcribe("prise.wav").text`.
 
 Un texte vide n'est jamais silencieux : la commande écrit sur stderr le pic
 (`0/32768`) et la durée, et distingue un fichier muet d'un signal sans parole
@@ -79,11 +79,11 @@ curl -L -o siwis.tar.bz2 \
   https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-fr_FR-siwis-medium.tar.bz2
 tar -xjf siwis.tar.bz2 -C models
 
-.venv/bin/silure say "Bonjour, ceci est la voix de Silure." --out voix.wav
-.venv/bin/silure say "Bonjour." --out voix.wav --no-play    # écrire sans lire
-.venv/bin/silure say "Bonjour." --style clair               # rendu plus clair, moins compressé
-.venv/bin/silure play voix.wav                              # jouer un WAV existant
-.venv/bin/silure play voix.wav --json                        # durée, fréquence, lecteur
+.venv/bin/veyla say "Bonjour, ceci est la voix de Veyla." --out voix.wav
+.venv/bin/veyla say "Bonjour." --out voix.wav --no-play    # écrire sans lire
+.venv/bin/veyla say "Bonjour." --style clair               # rendu plus clair, moins compressé
+.venv/bin/veyla play voix.wav                              # jouer un WAV existant
+.venv/bin/veyla play voix.wav --json                        # durée, fréquence, lecteur
 ```
 
 ### Styles de rendu
@@ -148,7 +148,7 @@ Le 24 bits n'ajoute pas de précision — le moteur rend du 16 bits — il évit
 perte de plus dans la chaîne de montage. Revenir en 16 bits après
 rééchantillonnage applique un dither TPDF.
 
-Loudness et pic réel, mesurés par le même code (`silure.master.loudness_lufs`,
+Loudness et pic réel, mesurés par le même code (`veyla.master.loudness_lufs`,
 `true_peak_dbfs`) sur une voix Piper et sur la voix clonée :
 
 | entrée | `neutre` | `podcast` | `studio` |
@@ -195,12 +195,12 @@ Sous Windows PowerShell, remplacer les deux lignes de téléchargement par
 
 Sortie mesurée sur cette machine pour la phrase de démonstration (48 caractères) :
 **4,24 s à 22 050 Hz, pic −7,3 dBFS, 95 % d'échantillons non nuls**, et le WAV relu par
-`silure transcribe` rend la phrase. Un moteur qui rendrait un signal muet lève
+`veyla transcribe` rend la phrase. Un moteur qui rendrait un signal muet lève
 `SilentSynthesis` et **n'écrit aucun fichier** : c'est le contrat, pas un warning.
 
 Le modèle se cherche dans `models/vits-piper-fr_FR-siwis-medium`, puis dans
-`SILURE_TTS_MODEL`, puis dans `--model`. `import silure` expose
-`silure.Speaker(silure.PiperEngine()).say("bonjour").save("voix.wav")`.
+`VEYLA_TTS_MODEL`, puis dans `--model`. `import veyla` expose
+`veyla.Speaker(veyla.PiperEngine()).say("bonjour").save("voix.wav")`.
 
 ## Cloner une voix (optionnel)
 
@@ -211,20 +211,20 @@ Le clonage zero-shot français utilise Qwen3-TTS (`Qwen/Qwen3-TTS-12Hz-0.6B-Base
 ```bash
 uv pip install -e ".[clone]"
 mkdir -p models
-# le modèle se place dans models/Qwen3-TTS-12Hz-0.6B-Base (ou SILURE_CLONE_MODEL)
+# le modèle se place dans models/Qwen3-TTS-12Hz-0.6B-Base (ou VEYLA_CLONE_MODEL)
 
 printf '{"subject":"...","granted_by":"...","statement":"..."}' > consent.json
-.venv/bin/silure clone "Bonjour, ceci est ma voix clonée." \
+.venv/bin/veyla clone "Bonjour, ceci est ma voix clonée." \
   --ref-audio prise.wav --ref-text "texte dit dans prise.wav" \
   --consent consent.json --out clone.wav
 ```
 
 La référence peut aussi être un fichier audio ou vidéo (MP3, M4A, MP4…) ou une URL de
-vidéo, avec la dépendance optionnelle `silure[url]` (yt-dlp et un ffmpeg embarqué) :
+vidéo, avec la dépendance optionnelle `veyla[url]` (yt-dlp et un ffmpeg embarqué) :
 
 ```bash
 uv pip install -e ".[url]"
-.venv/bin/silure clone "Texte à dire." \
+.venv/bin/veyla clone "Texte à dire." \
   --ref-audio "https://www.youtube.com/watch?v=..." --ref-start 12 --ref-duration 15 \
   --ref-text "ce qui est dit entre 12 et 27 s" --consent consent.json --out clone.wav
 ```
@@ -244,21 +244,21 @@ l'utilisateur ne sort toujours pas de la machine.
 
 Mesuré sur cette machine (6 cœurs, 6 Go de RAM, processeur seul) pour une phrase de
 50 caractères : **3,36 s d'audio à 24 000 Hz en 4 min 33 s** (chargement compris),
-**pic mémoire 2,73 Gio**, et le WAV relu par `silure transcribe` rend la phrase exacte.
+**pic mémoire 2,73 Gio**, et le WAV relu par `veyla transcribe` rend la phrase exacte.
 Le modèle est chargé en bfloat16, son format de stockage : en float32, le processus
 montait à 3,9 Go et se faisait tuer par le noyau. Sur une machine juste en mémoire,
 le confiner évite d'emporter le bureau avec lui :
-`systemd-run --user --scope -p MemoryMax=3G .venv/bin/silure clone ...`.
+`systemd-run --user --scope -p MemoryMax=3G .venv/bin/veyla clone ...`.
 
 Chaque sortie est accompagnée d'un fichier `clone.provenance.json` qui la marque
-comme synthétique et rattache la preuve de consentement. `import silure` expose
-`silure.QwenCloneEngine` et `silure.load_consent`.
+comme synthétique et rattache la preuve de consentement. `import veyla` expose
+`veyla.QwenCloneEngine` et `veyla.load_consent`.
 
 ## Vérifier que la machine de mesure fonctionne
 
 ```bash
 python3 -m unittest discover -s eval        # harnais de mesure
-python3 -m unittest discover -s tests       # paquet silure
+python3 -m unittest discover -s tests       # paquet veyla
 .venv/bin/ruff check src tests               # lint
 cd eval && python3 -m harness.runner --corpus corpora/demo --backend dummy
 ```

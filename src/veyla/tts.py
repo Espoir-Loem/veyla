@@ -24,7 +24,7 @@ from typing import Any, Protocol, runtime_checkable
 from .asr import (
     MissingDependency,
     MissingModel,
-    SilureError,
+    VeylaError,
     peak_amplitude,
     read_wav,
 )
@@ -49,32 +49,32 @@ __all__ = [
     "write_wav",
 ]
 
-MODEL_VAR_ENV = "SILURE_TTS_MODEL"
+MODEL_VAR_ENV = "VEYLA_TTS_MODEL"
 MODEL_DOWNLOAD_HINT = (
     "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/"
     "vits-piper-fr_FR-siwis-medium.tar.bz2"
 )
 DEFAULT_MODEL_DIR = Path("models") / "vits-piper-fr_FR-siwis-medium"
-MODEL_VAR_ENV_CLONE = "SILURE_CLONE_MODEL"
+MODEL_VAR_ENV_CLONE = "VEYLA_CLONE_MODEL"
 MODEL_DOWNLOAD_HINT_CLONE = "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base"
 DEFAULT_MODEL_DIR_CLONE = Path("models") / "Qwen3-TTS-12Hz-0.6B-Base"
 SILENCE_PEAK = 1
 """En dessous ou à ce niveau, un PCM 16 bits ne porte aucun son exploitable."""
 
 
-class EmptyText(SilureError):
+class EmptyText(VeylaError):
     """Le texte à dire est vide : rien à synthétiser."""
 
 
-class SilentSynthesis(SilureError):
+class SilentSynthesis(VeylaError):
     """Le moteur a rendu un signal muet : le fichier serait sans son."""
 
 
-class MissingConsent(SilureError):
+class MissingConsent(VeylaError):
     """Aucune preuve de consentement pour le clonage : la capacité reste fermée."""
 
 
-class MissingReference(SilureError):
+class MissingReference(VeylaError):
     """Audio de référence absent ou illisible pour le clonage."""
 
 
@@ -97,9 +97,9 @@ def wav_duration(path: str | os.PathLike[str]) -> tuple[float, int]:
             rate = w.getframerate()
             frames = w.getnframes()
     except (OSError, wave.Error) as exc:
-        raise SilureError(f"ce fichier n'est pas un WAV lisible : {path} ({exc})") from exc
+        raise VeylaError(f"ce fichier n'est pas un WAV lisible : {path} ({exc})") from exc
     if rate <= 0:
-        raise SilureError(f"WAV invalide, fréquence nulle : {path}")
+        raise VeylaError(f"WAV invalide, fréquence nulle : {path}")
     return frames / rate, rate
 
 
@@ -134,7 +134,7 @@ def export_wav(
     le 24 bits évite seulement une perte de plus dans la chaîne de montage.
     """
     if bits not in (16, 24):
-        raise SilureError(f"profondeur non prise en charge : {bits} bits (16 ou 24)")
+        raise VeylaError(f"profondeur non prise en charge : {bits} bits (16 ou 24)")
     rate = out_rate or sample_rate
     if rate == sample_rate and bits == 16:
         return write_wav(path, pcm, sample_rate)
@@ -160,7 +160,7 @@ def export_wav(
         handle.writeframes(data)
     with wave.open(str(target)) as check:
         if check.getframerate() != rate or check.getnframes() != len(values):
-            raise SilureError(f"{target} : en-tête incohérent après écriture")
+            raise VeylaError(f"{target} : en-tête incohérent après écriture")
     return target
 
 
@@ -175,7 +175,7 @@ def write_wav(path: str | os.PathLike[str], pcm: bytes, sample_rate: int) -> Pat
         handle.writeframes(pcm)
     frames, rate = read_wav(target)
     if rate != sample_rate or len(frames) != len(pcm):
-        raise SilureError(f"{target} : en-tête incohérent après écriture")
+        raise VeylaError(f"{target} : en-tête incohérent après écriture")
     return target
 
 
@@ -236,7 +236,7 @@ class Speaker:
         try:
             mastered = apply_master(pcm, rate, style, loudness)
         except ValueError as exc:
-            raise SilureError(str(exc)) from exc
+            raise VeylaError(str(exc)) from exc
         return Speech(
             text=clean,
             pcm=mastered.pcm,
@@ -363,7 +363,7 @@ class QwenCloneEngine:
             import qwen_tts  # noqa: F401
         except ImportError as exc:
             raise MissingDependency(
-                'qwen-tts n\'est pas installé. `uv pip install "silure[clone]"`.'
+                'qwen-tts n\'est pas installé. `uv pip install "veyla[clone]"`.'
             ) from exc
 
         model_file = self.model_dir / "model.safetensors"
@@ -404,7 +404,7 @@ class QwenCloneEngine:
                 x_vector_only_mode=self.ref_text is None,
             )
         except (ValueError, RuntimeError, OSError) as exc:
-            raise SilureError(f"échec du moteur de clonage : {exc}") from exc
+            raise VeylaError(f"échec du moteur de clonage : {exc}") from exc
         if not wavs:
             raise SilentSynthesis("le moteur de clonage n'a rendu aucun audio.")
         self.sample_rate = int(sr) or self.sample_rate
@@ -438,7 +438,7 @@ class PiperEngine:
             import sherpa_onnx
         except ModuleNotFoundError as exc:
             raise MissingDependency(
-                'sherpa-onnx n\'est pas installé. `uv pip install "silure[tts]"`.'
+                'sherpa-onnx n\'est pas installé. `uv pip install "veyla[tts]"`.'
             ) from exc
         except ImportError as exc:
             # Paquet présent mais bibliothèque native manquante (libonnxruntime,

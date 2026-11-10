@@ -20,7 +20,7 @@ __all__ = [
     "SAMPLE_RATE",
     "MissingDependency",
     "MissingModel",
-    "SilureError",
+    "VeylaError",
     "Transcription",
     "Transcriber",
     "UnsupportedAudio",
@@ -33,23 +33,23 @@ __all__ = [
 SAMPLE_RATE = 16_000
 """Fréquence attendue par les modèles Vosk. Toute autre fréquence est ramenée ici."""
 
-MODEL_VAR_ENV = "SILURE_VOSK_MODEL"
+MODEL_VAR_ENV = "VEYLA_VOSK_MODEL"
 MODEL_DOWNLOAD_HINT = "https://alphacephei.com/vosk/models/vosk-model-small-fr-0.22.zip"
 
 
-class SilureError(Exception):
+class VeylaError(Exception):
     """Erreur destinée à l'utilisateur : message lisible, pas de traceback."""
 
 
-class UnsupportedAudio(SilureError):
+class UnsupportedAudio(VeylaError):
     """Le fichier n'est pas un WAV PCM mono 16 bits."""
 
 
-class MissingDependency(SilureError):
+class MissingDependency(VeylaError):
     """Le backend demandé n'est pas installé."""
 
 
-class MissingModel(SilureError):
+class MissingModel(VeylaError):
     """Le répertoire de modèle est absent ou incomplet."""
 
 
@@ -190,7 +190,7 @@ class VoskEngine:
             import vosk  # noqa: F401  (import différé : dépendance optionnelle)
         except ImportError as exc:
             raise MissingDependency(
-                'Vosk n\'est pas installé. `pip install "silure[vosk]"`.'
+                'Vosk n\'est pas installé. `pip install "veyla[vosk]"`.'
             ) from exc
         if not Path(self.model_dir).is_dir():
             raise MissingModel(
@@ -199,8 +199,8 @@ class VoskEngine:
             )
         self._vosk = vosk
         # Vosk écrit son journal de chargement sur stderr : une CLI qui transcrit
-        # silencieusement ne doit pas noyer son résultat. SILURE_VOSK_LOG=0 le rétablit.
-        vosk.SetLogLevel(int(os.environ.get("SILURE_VOSK_LOG", "-1")))
+        # silencieusement ne doit pas noyer son résultat. VEYLA_VOSK_LOG=0 le rétablit.
+        vosk.SetLogLevel(int(os.environ.get("VEYLA_VOSK_LOG", "-1")))
         self._model = vosk.Model(str(self.model_dir))
 
     def transcribe(self, pcm: bytes, sample_rate: int) -> str:

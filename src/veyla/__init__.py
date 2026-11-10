@@ -1,16 +1,16 @@
-"""Silure — voix locale : transcription et synthèse.
+"""Veyla — voix locale : transcription et synthèse.
 
 Contrat public :
 
-    import silure
-    resultat = silure.transcribe("prise.wav")
+    import veyla
+    resultat = veyla.transcribe("prise.wav")
     print(resultat.text)
 
 Le texte vient d'un modèle qui tourne sur la machine. Aucune fonction de ce module
 n'ouvre de connexion réseau.
 
-    import silure
-    audio = silure.Speaker(silure.PiperEngine()).say("bonjour")
+    import veyla
+    audio = veyla.Speaker(veyla.PiperEngine()).say("bonjour")
     audio.save("voix.wav")
 """
 
@@ -19,10 +19,10 @@ from __future__ import annotations
 from .asr import (
     MissingDependency,
     MissingModel,
-    SilureError,
     Transcriber,
     Transcription,
     UnsupportedAudio,
+    VeylaError,
     VoskEngine,
     peak_amplitude,
     resample_pcm16,
@@ -55,7 +55,7 @@ __all__ = [
     "PiperEngine",
     "QwenCloneEngine",
     "SilentSynthesis",
-    "SilureError",
+    "VeylaError",
     "Speaker",
     "Speech",
     "Transcription",

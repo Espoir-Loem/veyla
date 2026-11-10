@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol
 
-from .asr import MissingDependency, SilureError
+from .asr import MissingDependency, VeylaError
 
 __all__ = [
     "AudioPlayer",
@@ -54,10 +54,10 @@ class CommandPlayer:
                 check=False,
             )
         except OSError as exc:
-            raise SilureError(f"{self.name} : {exc}") from exc
+            raise VeylaError(f"{self.name} : {exc}") from exc
         if done.returncode != 0:
             detail = (done.stderr or done.stdout or "").strip().splitlines()
-            raise SilureError(
+            raise VeylaError(
                 f"{self.name} : code {done.returncode}" + (f" ({detail[-1]})" if detail else "")
             )
 
@@ -78,7 +78,7 @@ class WinsoundPlayer:
         try:
             winsound.PlaySound(str(path), winsound.SND_FILENAME | winsound.SND_NODEFAULT)
         except RuntimeError as exc:  # pragma: no cover - dépend de la plateforme
-            raise SilureError(f"winsound : {exc}") from exc
+            raise VeylaError(f"winsound : {exc}") from exc
 
 
 def _ffplay() -> CommandPlayer:
@@ -122,7 +122,7 @@ def play_file(path: str | Path, players: list[AudioPlayer] | None = None) -> str
     """Joue `path` avec le premier lecteur qui marche, et rend son nom.
 
     Lève `MissingDependency` si aucun lecteur n'existe sur la machine, et
-    `SilureError` si tous ceux présents échouent — avec le détail de chacun.
+    `VeylaError` si tous ceux présents échouent — avec le détail de chacun.
     """
     target = Path(path)
     candidates = default_players() if players is None else players
@@ -139,12 +139,12 @@ def play_file(path: str | Path, players: list[AudioPlayer] | None = None) -> str
     for player in available:
         try:
             player.play(target)
-        except SilureError as exc:
+        except VeylaError as exc:
             failures.append(str(exc))
             continue
         return player.name
 
-    raise SilureError(
+    raise VeylaError(
         f"lecture impossible : {' ; '.join(failures)}. "
         f"Le WAV reste écrit dans {target} : l'ouvrir avec un lecteur, "
         "ou relancer sans lecture (--no-play)."

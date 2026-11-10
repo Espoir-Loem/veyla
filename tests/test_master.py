@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from silure import master  # noqa: E402
+from veyla import master  # noqa: E402
 
 RATE = 22050
 

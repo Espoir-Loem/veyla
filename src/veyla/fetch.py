@@ -2,7 +2,7 @@
 
 Une URL est téléchargée par yt-dlp ; tout ce qui n'est pas un WAV utilisable tel quel
 est converti par ffmpeg en WAV mono 24 kHz, éventuellement découpé (`start`,
-`duration`). Les deux outils sont des dépendances optionnelles (`silure[url]`),
+`duration`). Les deux outils sont des dépendances optionnelles (`veyla[url]`),
 chargées seulement quand on en a besoin.
 
 Ce que ce module ne fait pas : vérifier le consentement. La CLI l'exige avant
@@ -19,7 +19,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
-from .asr import MissingDependency, SilureError
+from .asr import MissingDependency, VeylaError
 from .tts import MissingReference
 
 __all__ = [
@@ -75,9 +75,9 @@ def download_audio(url: str, workdir: Path) -> Path:
             info = ydl.extract_info(url, download=True)
             path = Path(ydl.prepare_filename(info))
     except Exception as exc:  # yt-dlp lève ses propres types, tous à présenter
-        raise SilureError(f"téléchargement impossible ({url}) : {exc}") from exc
+        raise VeylaError(f"téléchargement impossible ({url}) : {exc}") from exc
     if not path.is_file():
-        raise SilureError(f"téléchargement sans fichier audio : {url}")
+        raise VeylaError(f"téléchargement sans fichier audio : {url}")
     return path
 
 
@@ -131,7 +131,7 @@ def isolate_voice(src: Path, workdir: Path) -> Path:
     vocals = out / "htdemucs" / src.stem / "vocals.wav"
     if result.returncode != 0 or not vocals.is_file():
         detail = result.stderr.strip().splitlines()[-1:] or ["sans message"]
-        raise SilureError(f"séparation de la voix impossible ({src}) : {detail[0]}")
+        raise VeylaError(f"séparation de la voix impossible ({src}) : {detail[0]}")
     return vocals
 
 

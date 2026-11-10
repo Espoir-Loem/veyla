@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from silure import asr, cli, tts  # noqa: E402
+from veyla import asr, cli, tts  # noqa: E402
 
 RATE = 22050
 
@@ -421,9 +421,9 @@ class TestQwenCloneEngine(unittest.TestCase):
         # sur une machine de 6 Go, mesuré le 2026-11-10).
         self.assertEqual(tts.QwenCloneEngine().dtype, "bfloat16")
 
-    def test_erreur_du_moteur_devient_une_erreur_silure(self):
+    def test_erreur_du_moteur_devient_une_erreur_veyla(self):
         model = FakeQwenModel(error=ValueError("ref illisible"))
-        with self.assertRaises(asr.SilureError) as ctx:
+        with self.assertRaises(asr.VeylaError) as ctx:
             self._engine(model).synthesize("bonjour")
         self.assertIn("ref illisible", str(ctx.exception))
 

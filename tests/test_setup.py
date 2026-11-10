@@ -1,4 +1,4 @@
-"""Tests de `silure setup` : téléchargement et installation des modèles."""
+"""Tests de `veyla setup` : téléchargement et installation des modèles."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from silure import asr, cli, setup  # noqa: E402
+from veyla import asr, cli, setup  # noqa: E402
 
 
 def zip_bytes(files: dict[str, bytes]) -> bytes:
@@ -106,14 +106,14 @@ class TestInstall(unittest.TestCase):
 
     def test_archive_incomplete_refusee_et_rien_installe(self):
         self.net.archives["piper"] = tar_bz2_bytes({"vits-piper-fr_FR-siwis-medium/x": b"x"})
-        with self.assertRaises(asr.SilureError) as ctx:
+        with self.assertRaises(asr.VeylaError) as ctx:
             self._run(("piper",))
         self.assertIn("tokens.txt", str(ctx.exception))
         self.assertFalse((self.root / "vits-piper-fr_FR-siwis-medium").exists())
 
     def test_archive_qui_sort_du_dossier_refusee(self):
         self.net.archives["vosk"] = zip_bytes({"../evil.txt": b"x"})
-        with self.assertRaises(asr.SilureError):
+        with self.assertRaises(asr.VeylaError):
             self._run(("vosk",))
         self.assertFalse((self.root.parent / "evil.txt").exists())
 
@@ -124,7 +124,7 @@ class TestInstall(unittest.TestCase):
         self.assertEqual(rapport[0].status, "installé")
 
     def test_nom_inconnu_refuse(self):
-        with self.assertRaises(asr.SilureError):
+        with self.assertRaises(asr.VeylaError):
             self._run(("whisper",))
 
 
@@ -154,7 +154,7 @@ class TestCliSetup(unittest.TestCase):
 
     def test_echec_sans_traceback(self):
         def installer(names, root, **kwargs):
-            raise asr.SilureError("réseau injoignable")
+            raise asr.VeylaError("réseau injoignable")
 
         erreur = io.StringIO()
         with redirect_stdout(io.StringIO()), redirect_stderr(erreur):

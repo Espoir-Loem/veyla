@@ -1,4 +1,4 @@
-"""Tests de `silure play` : jouer un WAV existant, pas seulement celui qu'on vient d'écrire."""
+"""Tests de `veyla play` : jouer un WAV existant, pas seulement celui qu'on vient d'écrire."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from silure import cli  # noqa: E402
+from veyla import cli  # noqa: E402
 
 
 def make_wav(path: Path, seconds: float = 0.5, rate: int = 22050) -> None:
@@ -74,10 +74,10 @@ class TestPlay(unittest.TestCase):
         self.assertEqual(data["player"], "fake")
 
     def test_lecture_impossible(self):
-        from silure.asr import SilureError
+        from veyla.asr import VeylaError
 
         def casse(_path):
-            raise SilureError("aucun haut-parleur")
+            raise VeylaError("aucun haut-parleur")
 
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "voix.wav"

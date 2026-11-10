@@ -1,4 +1,4 @@
-"""`silure setup` : télécharge et installe les modèles en une commande.
+"""`veyla setup` : télécharge et installe les modèles en une commande.
 
 Chaque modèle est téléchargé dans un dossier temporaire à côté de sa cible,
 vérifié (fichiers attendus présents, aucune entrée d'archive hors du dossier),
@@ -7,7 +7,7 @@ installé que les commandes prendraient pour bon. Un modèle déjà présent et
 complet n'est pas retéléchargé.
 
 Bibliothèque standard seulement, sauf Qwen, récupéré par `huggingface_hub`
-(installé avec `silure[clone]`).
+(installé avec `veyla[clone]`).
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
-from .asr import MissingDependency, SilureError
+from .asr import MissingDependency, VeylaError
 
 __all__ = ["MODELS", "Model", "Result", "check", "install"]
 
@@ -93,7 +93,7 @@ def fetch_url(url: str, dest: Path, log: Callable[[str], None] = print) -> None:
     try:
         urllib.request.urlretrieve(url, dest, reporthook=_progress(log))
     except OSError as exc:
-        raise SilureError(f"téléchargement impossible ({url}) : {exc}") from exc
+        raise VeylaError(f"téléchargement impossible ({url}) : {exc}") from exc
 
 
 def fetch_hf(repo_id: str, target: Path) -> None:
@@ -106,7 +106,7 @@ def fetch_hf(repo_id: str, target: Path) -> None:
     try:
         snapshot_download(repo_id=repo_id, local_dir=str(target))
     except Exception as exc:  # le hub lève ses propres types, tous à présenter
-        raise SilureError(f"téléchargement impossible ({repo_id}) : {exc}") from exc
+        raise VeylaError(f"téléchargement impossible ({repo_id}) : {exc}") from exc
 
 
 def _inside(base: Path, name: str) -> bool:
@@ -120,7 +120,7 @@ def _extract(archive: Path, dest: Path) -> None:
         with zipfile.ZipFile(archive) as z:
             bad = [n for n in z.namelist() if not _inside(dest, n)]
             if bad:
-                raise SilureError(f"archive refusée, chemin hors du dossier : {bad[0]}")
+                raise VeylaError(f"archive refusée, chemin hors du dossier : {bad[0]}")
             z.extractall(dest)
         return
     try:
@@ -131,13 +131,13 @@ def _extract(archive: Path, dest: Path) -> None:
                 if not _inside(dest, m.name) or m.issym() or m.islnk()
             ]
             if bad:
-                raise SilureError(f"archive refusée, entrée dangereuse : {bad[0]}")
+                raise VeylaError(f"archive refusée, entrée dangereuse : {bad[0]}")
             if hasattr(tarfile, "data_filter"):
                 t.extractall(dest, filter="data")
             else:  # pragma: no cover - Python < 3.10.12
                 t.extractall(dest)
     except tarfile.TarError as exc:
-        raise SilureError(f"archive illisible ({archive.name}) : {exc}") from exc
+        raise VeylaError(f"archive illisible ({archive.name}) : {exc}") from exc
 
 
 def _find_model_dir(base: Path, model: Model) -> Path:
@@ -146,7 +146,7 @@ def _find_model_dir(base: Path, model: Model) -> Path:
         if all((candidate / item).exists() for item in model.required):
             return candidate
     missing = ", ".join(model.required)
-    raise SilureError(f"{model.name} : archive incomplète, fichiers attendus absents ({missing})")
+    raise VeylaError(f"{model.name} : archive incomplète, fichiers attendus absents ({missing})")
 
 
 def install(
@@ -162,7 +162,7 @@ def install(
     fetch = fetcher or (lambda url, dest: fetch_url(url, dest, log))
     unknown = [n for n in names if n not in MODELS]
     if unknown:
-        raise SilureError(f"modèle inconnu : {unknown[0]}. Modèles : {', '.join(MODELS)}")
+        raise VeylaError(f"modèle inconnu : {unknown[0]}. Modèles : {', '.join(MODELS)}")
     root.mkdir(parents=True, exist_ok=True)
     results = []
     for name in names:
@@ -200,7 +200,7 @@ def check(root: Path) -> str:
     from .asr import Transcriber, VoskEngine
     from .tts import PiperEngine, Speaker
 
-    # Des mots courants : un nom propre (« Silure ») est hors du vocabulaire de
+    # Des mots courants : un nom propre (« Veyla ») est hors du vocabulaire de
     # Vosk et ferait échouer l'essai pour une raison qui n'est pas l'installation.
     phrase = "Bonjour, tout est prêt."
     speech = Speaker(PiperEngine(Path(root) / MODELS["piper"].folder)).say(phrase)
@@ -209,7 +209,7 @@ def check(root: Path) -> str:
         engine = VoskEngine(Path(root) / MODELS["vosk"].folder)
         text = Transcriber(engine).transcribe_file(path).text
     if not text.strip():
-        raise SilureError("la synthèse n'a été reconnue par aucun mot : vérifier les modèles.")
+        raise VeylaError("la synthèse n'a été reconnue par aucun mot : vérifier les modèles.")
     return text
 
 

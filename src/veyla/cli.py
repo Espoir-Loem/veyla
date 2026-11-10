@@ -1,4 +1,4 @@
-"""Point d'entrée `silure` : transcrire un fichier, et dire du texte."""
+"""Point d'entrée `veyla` : transcrire un fichier, et dire du texte."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__
-from .asr import SilureError, Transcriber, VoskEngine
+from .asr import Transcriber, VeylaError, VoskEngine
 from .fetch import prepare_reference
 from .master import LOUDNESS_TARGETS, STYLES
 from .players import play_file
@@ -29,8 +29,8 @@ from .tts import (
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="silure", description="Voix locale, sans serveur.")
-    parser.add_argument("--version", action="version", version=f"silure {__version__}")
+    parser = argparse.ArgumentParser(prog="veyla", description="Voix locale, sans serveur.")
+    parser.add_argument("--version", action="version", version=f"veyla {__version__}")
     sub = parser.add_subparsers(dest="commande", required=True)
 
     trans = sub.add_parser("transcribe", help="transcrire un fichier WAV en texte")
@@ -38,7 +38,7 @@ def _build_parser() -> argparse.ArgumentParser:
     trans.add_argument(
         "--model",
         default=None,
-        help="répertoire du modèle Vosk (défaut : models/ ou SILURE_VOSK_MODEL)",
+        help="répertoire du modèle Vosk (défaut : models/ ou VEYLA_VOSK_MODEL)",
     )
     trans.add_argument("--json", action="store_true", help="sortie JSON")
 
@@ -48,7 +48,7 @@ def _build_parser() -> argparse.ArgumentParser:
     say.add_argument(
         "--model",
         default=None,
-        help="répertoire du modèle Piper (défaut : models/ ou SILURE_TTS_MODEL)",
+        help="répertoire du modèle Piper (défaut : models/ ou VEYLA_TTS_MODEL)",
     )
     say.add_argument(
         "--play",
@@ -93,12 +93,12 @@ def _build_parser() -> argparse.ArgumentParser:
     clone.add_argument(
         "--model",
         default=None,
-        help="répertoire du modèle Qwen3-TTS (défaut : models/ ou SILURE_CLONE_MODEL)",
+        help="répertoire du modèle Qwen3-TTS (défaut : models/ ou VEYLA_CLONE_MODEL)",
     )
     clone.add_argument(
         "--ref-audio",
         required=True,
-        help="référence à cloner : WAV, fichier audio ou vidéo, ou URL (silure[url])",
+        help="référence à cloner : WAV, fichier audio ou vidéo, ou URL (veyla[url])",
     )
     clone.add_argument(
         "--ref-start",
@@ -109,7 +109,7 @@ def _build_parser() -> argparse.ArgumentParser:
     clone.add_argument(
         "--isolate-voice",
         action="store_true",
-        help="séparer la voix de la musique de fond avant le clonage (silure[isolate])",
+        help="séparer la voix de la musique de fond avant le clonage (veyla[isolate])",
     )
     clone.add_argument(
         "--ref-duration",
@@ -169,7 +169,7 @@ def _build_parser() -> argparse.ArgumentParser:
     setup.add_argument(
         "--clone",
         action="store_true",
-        help="installer aussi Qwen3-TTS pour le clonage (2,4 Go, silure[clone])",
+        help="installer aussi Qwen3-TTS pour le clonage (2,4 Go, veyla[clone])",
     )
     setup.add_argument(
         "--no-check",
@@ -201,12 +201,12 @@ def empty_message(result) -> str:
 def _transcribe(args, engine_factory) -> int:
     try:
         result = Transcriber(engine_factory(args.model)).transcribe_file(args.audio)
-    except SilureError as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: {exc}", file=sys.stderr)
         return 1
 
     if not result.text:
-        print(f"silure: {empty_message(result)}", file=sys.stderr)
+        print(f"veyla: {empty_message(result)}", file=sys.stderr)
 
     if args.json:
         print(
@@ -237,10 +237,10 @@ def _say(args, tts_factory, player) -> int:
         if args.play:
             joue = player(path)
     except EmptyText as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+        print(f"veyla: {exc}", file=sys.stderr)
         return 2
-    except SilureError as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: {exc}", file=sys.stderr)
         return 1
 
     if args.json:
@@ -285,11 +285,11 @@ def _clone(args, clone_factory, player, reference_factory) -> int:
     # Le consentement d'abord : sans preuve, rien n'est téléchargé ni converti.
     try:
         consent = load_consent(args.consent)
-    except SilureError as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: {exc}", file=sys.stderr)
         return 1
 
-    with tempfile.TemporaryDirectory(prefix="silure-ref-") as workdir:
+    with tempfile.TemporaryDirectory(prefix="veyla-ref-") as workdir:
         try:
             reference = reference_factory(
                 args.ref_audio,
@@ -298,8 +298,8 @@ def _clone(args, clone_factory, player, reference_factory) -> int:
                 duration=args.ref_duration,
                 isolate=args.isolate_voice,
             )
-        except SilureError as exc:
-            print(f"silure: {exc}", file=sys.stderr)
+        except VeylaError as exc:
+            print(f"veyla: {exc}", file=sys.stderr)
             return 1
         return _clone_from(args, clone_factory, player, consent, reference)
 
@@ -338,10 +338,10 @@ def _clone_from(args, clone_factory, player, consent, reference) -> int:
         if args.play:
             joue = player(path)
     except EmptyText as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+        print(f"veyla: {exc}", file=sys.stderr)
         return 2
-    except SilureError as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: {exc}", file=sys.stderr)
         return 1
 
     if args.json:
@@ -385,8 +385,8 @@ def _setup(args, installer, checker) -> int:
     root = Path(args.dir)
     try:
         results = installer(names, root, log=lambda m: print(m, file=sys.stderr))
-    except SilureError as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: {exc}", file=sys.stderr)
         return 1
     for result in results:
         print(f"{result.name:6} {result.status:13} {result.path}")
@@ -394,8 +394,8 @@ def _setup(args, installer, checker) -> int:
         return 0
     try:
         texte = checker(root)
-    except SilureError as exc:
-        print(f"silure: modèles installés, mais l'essai a échoué : {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: modèles installés, mais l'essai a échoué : {exc}", file=sys.stderr)
         return 1
     print(f"essai : synthèse puis transcription → « {texte} »")
     return 0
@@ -404,13 +404,13 @@ def _setup(args, installer, checker) -> int:
 def _play(args, player) -> int:
     path = Path(args.audio)
     if not path.is_file():
-        print(f"silure: fichier introuvable : {path}", file=sys.stderr)
+        print(f"veyla: fichier introuvable : {path}", file=sys.stderr)
         return 1
     try:
         duration, rate = wav_duration(path)
         joue = player(path)
-    except SilureError as exc:
-        print(f"silure: {exc}", file=sys.stderr)
+    except VeylaError as exc:
+        print(f"veyla: {exc}", file=sys.stderr)
         return 1
 
     if args.json:

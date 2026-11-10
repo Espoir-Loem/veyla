@@ -8,8 +8,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from silure import players  # noqa: E402
-from silure.asr import MissingDependency, SilureError  # noqa: E402
+from veyla import players  # noqa: E402
+from veyla.asr import MissingDependency, VeylaError  # noqa: E402
 
 
 class FakePlayer:
@@ -48,7 +48,7 @@ class TestPlayers(unittest.TestCase):
         self.assertEqual(premier.played, [])
 
     def test_echec_passe_au_suivant(self):
-        casse = FakePlayer("casse", error=SilureError("pas de périphérique"))
+        casse = FakePlayer("casse", error=VeylaError("pas de périphérique"))
         bon = FakePlayer("bon")
         self.assertEqual(players.play_file("a.wav", [casse, bon]), "bon")
 
@@ -58,9 +58,9 @@ class TestPlayers(unittest.TestCase):
         self.assertIn("--no-play", str(ctx.exception))
 
     def test_tous_en_echec_donnent_les_causes(self):
-        un = FakePlayer("un", error=SilureError("muet"))
-        deux = FakePlayer("deux", error=SilureError("absent"))
-        with self.assertRaises(SilureError) as ctx:
+        un = FakePlayer("un", error=VeylaError("muet"))
+        deux = FakePlayer("deux", error=VeylaError("absent"))
+        with self.assertRaises(VeylaError) as ctx:
             players.play_file("a.wav", [un, deux])
         message = str(ctx.exception)
         self.assertIn("muet", message)

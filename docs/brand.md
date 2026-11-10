@@ -1,4 +1,4 @@
-# Silure — Document de marque
+# Veyla — Document de marque
 
 Version 0.3 · statut : premier chiffre public mesuré, non comparé à une baseline cloud · campagne : `eval/reports/2026-11-01-fleurs100-vosk.md`
 Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'est publiée avant d'avoir été mesurée sur un jeu de `eval/CORPUS.md`, jamais sur un corpus de validation.
@@ -9,23 +9,27 @@ Toute valeur marquée `[à mesurer]` est une hypothèse non vérifiée. Elle n'e
 
 **La reconnaissance vocale a cessé d'être un service cloud. Elle tient dans 60 Mo, elle tourne sur du matériel déjà acheté, et sa précision n'est plus un compromis.**
 
-Silure est la couche de parole qui s'exécute sur l'appareil de l'utilisateur final. Pas parce que le cloud est cher — parce que pour l'audio, la machine locale est devenue objectivement meilleure : pas d'aller-retour réseau, pas d'ingestion de données biométriques, pas de facturation à la minute.
+Veyla est la couche de parole qui s'exécute sur l'appareil de l'utilisateur final. Pas parce que le cloud est cher — parce que pour l'audio, la machine locale est devenue objectivement meilleure : pas d'aller-retour réseau, pas d'ingestion de données biométriques, pas de facturation à la minute.
 
 Nous vendons une architecture de référence et sa preuve publique. Nous ne vendons pas du « gratuit » : nous déplaçons le coût vers un matériel qui est déjà payé, et nous le disons.
 
-> **Nom retenu : Silure.** Mot français de trois syllabes, prononçable sans
-> approximation en anglais, sans connotation cloud, et dont l'attaque « sil- » porte
-> accidentellement la bonne idée : rien ne se voit sur le réseau. Le silure est en
-> plus un poisson dont la vessie natrice lui permet de tenir en place sans effort —
-> image exacte d'un calcul qui ne migre pas.
-> Réserves assumées : c'est un poisson envahissant et laid, le lien avec la voix est
-> arbitraire, et le dépôt de marque n'est pas vérifié. **Action ouverte : recherche
-> d'antériorité INPI/EUIPO avant tout engagement de design.** Si un homonyme existe
-> dans les classes 9 et 42, on bascule sur Formant.
+> **Nom retenu : Veyla** (décision du 2026-11-10, cible internationale). Prononcé
+> « VÉÏ-la », sans approximation en anglais, en français ou en espagnol. Le nom
+> évoque *veil*, le voile : il porte la promesse qui nous distingue des services
+> cloud — la voix ne quitte pas la machine — plutôt que la technique, que tout le
+> monde revendique. Le V initial rappelle *voice* sans le dire.
+> Vérifié le 2026-11-10 : libre sur PyPI ; aucun produit vocal homonyme trouvé.
+> Réserves assumées : le nom ne dit rien du son, et le dépôt de marque n'est pas
+> vérifié. **Action ouverte : recherche d'antériorité INPI/EUIPO/USPTO (classes 9
+> et 42) et noms de domaine avant tout engagement de design.** Repli : **Ondea**
+> (*onde* + *idea*, libre sur PyPI, proche d'Ondewo).
 >
-> Alternatives conservées : **Anchois** (essaim silencieux, discret), **Formant** (le
-> vocabulaire du domaine, mais terme générique donc peu protégeable), **Plaine**
-> (l'audio brut, sans nuage).
+> Nom précédent : **Silure**, abandonné le même jour. Trop proche de **Silero**,
+> projet de modèles vocaux open source très diffusé (STT, TTS, VAD) dans notre
+> propre domaine — confusion, référencement et risque d'opposition ; illisible hors
+> de France ; « silure » renvoie d'abord au poisson. Écartés aussi : Aurio (app macOS
+> de débruitage local existante), Voxa (plusieurs produits vocaux), Sonaro (trop
+> proche de SonoVoice).
 
 ---
 
@@ -246,7 +250,7 @@ Position de marque assumée : **ElevenLabs a construit son moat sur le marché d
 
 ## 9. Positionnement concurrentiel
 
-| | Cloud API | Open source edge | **Silure** |
+| | Cloud API | Open source edge | **Veyla** |
 |---|---|---|---|
 | Coût éditeur | facturation à l'usage | nul | nul |
 | Confidentialité | données sortantes | locales | locales, **auditable** |
@@ -289,7 +293,7 @@ Choix délibéré : nous ne pouvons pas mesurer notre propre usage depuis nos se
 Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauvais moment.
 
 - Pas de plateforme, pas de marché de voix, pas de dashboard hébergé. Un dashboard cloud réintroduit exactement ce que nous vendons comme inutile.
-- **Voix standard par défaut, clonage ouvert sous conditions (décision du 2026-11-10).** `silure say` synthétise avec une voix française standard (Piper `fr_FR-siwis-medium`, 22 050 Hz, locale) — c'est la sortie par défaut, celle qui n'ingère aucun enregistrement personnel. Le porteur a demandé le clonage : il entre dans le périmètre, mais **derrière le §8**, pas à côté. Une voix clonée exige (a) l'audio de référence fourni par la personne ou par son mandataire, (b) une preuve de consentement capturée localement, (c) un marquage synthétique de l'artefact. Tant que ces trois points ne sont pas implémentés, la capacité n'est pas livrée : le §8 reste la condition, pas la documentation. État technique au 2026-11-10 : ZipVoice, le clonage zero-shot de sherpa-onnx, ne couvre que le chinois et l'anglais ; un modèle français (XTTS-v2, F5-TTS fr, OpenVoice v2) demande un autre moteur et une décision de licence. Le WAV produit est déclaré synthétique par la CLI (`--json` : `engine`) ; aucun marquage C2PA n'est encore émis.
+- **Voix standard par défaut, clonage ouvert sous conditions (décision du 2026-11-10).** `veyla say` synthétise avec une voix française standard (Piper `fr_FR-siwis-medium`, 22 050 Hz, locale) — c'est la sortie par défaut, celle qui n'ingère aucun enregistrement personnel. Le porteur a demandé le clonage : il entre dans le périmètre, mais **derrière le §8**, pas à côté. Une voix clonée exige (a) l'audio de référence fourni par la personne ou par son mandataire, (b) une preuve de consentement capturée localement, (c) un marquage synthétique de l'artefact. Tant que ces trois points ne sont pas implémentés, la capacité n'est pas livrée : le §8 reste la condition, pas la documentation. État technique au 2026-11-10 : ZipVoice, le clonage zero-shot de sherpa-onnx, ne couvre que le chinois et l'anglais ; un modèle français (XTTS-v2, F5-TTS fr, OpenVoice v2) demande un autre moteur et une décision de licence. Le WAV produit est déclaré synthétique par la CLI (`--json` : `engine`) ; aucun marquage C2PA n'est encore émis.
 - Pas de multilingue exhaustif au lancement : fr + en, corpus de domaine, puis extension sur preuve.
 - Pas de revendication économique (rentabilité, indépendance, démocratisation) dans le contenu produit. C'est notre motivation, ce n'est pas notre argument de vente.
 - Pas de course aux paramètres. Kokoro à 82 Mo est un meilleur pari qu'un modèle plus gros qu'aucun téléphone ne chargera.
@@ -337,15 +341,15 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 | Élément | Statut |
 |---|---|
 | Harnais de mesure — stdlib, manifeste SHA256 | fait : `eval/harness/` |
-| Paquet installable — API `silure.transcribe` et CLI `silure transcribe` | fait : `pyproject.toml`, `src/silure/` |
+| Paquet installable — API `veyla.transcribe` et CLI `veyla transcribe` | fait : `pyproject.toml`, `src/veyla/` |
 | Instrument de mesure — RTF apparié, ponctuation complétée (empreinte `58bbb1e6cbd991c8`) | corrigé le 2026-11-10 : `eval/harness/metrics.py` |
 | Protocole de corpus — jeux, conditions, règles d'exclusion | fait : `eval/CORPUS.md` |
-| Nom | tranché : **Silure**, sous réserve d'antériorité |
-| Périmètre v1 | tranché : **STT + TTS voix standard** (`silure transcribe`, `silure say`) ; clonage ouvert le 2026-11-10 sous conditions §8, non implémenté (§12) |
-| Clonage zero-shot français | implémenté le 2026-11-10 avec Qwen3-TTS-12Hz-0.6B-Base (français), derrière `--consent` et un fichier de provenance marquant l'artefact comme synthétique : `src/silure/tts.py` (`QwenCloneEngine`), `silure clone`. Moteur lourd (~2,3 Go), dépendance optionnelle `silure[clone]` |
-| Synthèse locale — Piper `fr_FR-siwis-medium`, 67 Mo, sortie 22 050 Hz | fait le 2026-11-10 : `src/silure/tts.py`, 4,24 s d'audio pour 48 caractères (pic −7,3 dBFS), refus explicite d'un signal muet |
-| Lecture audio | fait le 2026-11-10 : `src/silure/players.py`, active par défaut (`winsound` Windows, `afplay` macOS, `pw-play`/`paplay`/`aplay`/`ffplay` Linux), échec explicite au lieu du silence |
-| Rendu audio — styles `podcast`, `clair`, `neutre` | fait le 2026-11-10 : `src/silure/master.py`, DSP sans dépendance (passe-haut, cloche, compression 2:1, crête −1 dBFS). Mesuré : RMS −19,0 → −16,2 dBFS, énergie > 3 kHz 2,6 → 3,8 %, même transcription. Ne change pas le timbre : ce n'est pas du clonage (§12) |
+| Nom | tranché : **Veyla** (2026-11-10, remplace Silure, trop proche de Silero), sous réserve d'antériorité |
+| Périmètre v1 | tranché : **STT + TTS voix standard** (`veyla transcribe`, `veyla say`) ; clonage ouvert le 2026-11-10 sous conditions §8, non implémenté (§12) |
+| Clonage zero-shot français | implémenté le 2026-11-10 avec Qwen3-TTS-12Hz-0.6B-Base (français), derrière `--consent` et un fichier de provenance marquant l'artefact comme synthétique : `src/veyla/tts.py` (`QwenCloneEngine`), `veyla clone`. Moteur lourd (~2,3 Go), dépendance optionnelle `veyla[clone]` |
+| Synthèse locale — Piper `fr_FR-siwis-medium`, 67 Mo, sortie 22 050 Hz | fait le 2026-11-10 : `src/veyla/tts.py`, 4,24 s d'audio pour 48 caractères (pic −7,3 dBFS), refus explicite d'un signal muet |
+| Lecture audio | fait le 2026-11-10 : `src/veyla/players.py`, active par défaut (`winsound` Windows, `afplay` macOS, `pw-play`/`paplay`/`aplay`/`ffplay` Linux), échec explicite au lieu du silence |
+| Rendu audio — styles `podcast`, `clair`, `neutre` | fait le 2026-11-10 : `src/veyla/master.py`, DSP sans dépendance (passe-haut, cloche, compression 2:1, crête −1 dBFS). Mesuré : RMS −19,0 → −16,2 dBFS, énergie > 3 kHz 2,6 → 3,8 %, même transcription. Ne change pas le timbre : ce n'est pas du clonage (§12) |
 | Seuils d'acceptation | fixés : table du §13.1 |
 | Cinq refus d'utilisation | écrits : §8.1 |
 | Backend d'un modèle réel | fait : `vosk-small-fr`, branché dans `harness.backends_vosk` |

@@ -1,4 +1,4 @@
-"""Tests du paquet `silure`. `python3 -m unittest discover -s tests`."""
+"""Tests du paquet `veyla`. `python3 -m unittest discover -s tests`."""
 
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-import silure  # noqa: E402
-from silure import asr, cli  # noqa: E402
+import veyla  # noqa: E402
+from veyla import asr, cli  # noqa: E402
 
 
 def make_wav(
@@ -98,7 +98,7 @@ class TestTranscription(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "a.wav"
             make_wav(path)
-            result = silure.Transcriber(FakeEngine()).transcribe_file(path)
+            result = veyla.Transcriber(FakeEngine()).transcribe_file(path)
             self.assertEqual(result.text, "le chat dort")
             self.assertEqual(result.engine, "fake")
             self.assertAlmostEqual(result.duration_s, 0.5, places=3)
@@ -108,7 +108,7 @@ class TestTranscription(unittest.TestCase):
             path = Path(tmp) / "a.wav"
             make_wav(path, rate=48000)
             # FakeEngine refuse toute fréquence autre que 16 kHz.
-            silure.Transcriber(FakeEngine()).transcribe_file(path)
+            veyla.Transcriber(FakeEngine()).transcribe_file(path)
 
     def test_modele_absent_donne_une_erreur_lisible(self):
         engine = asr.VoskEngine("/inexistant/modele")
@@ -176,7 +176,7 @@ class TestCli(unittest.TestCase):
             with redirect_stderr(erreur):
                 code = cli.main(["transcribe", str(path)])
             self.assertEqual(code, 1)
-            self.assertIn("silure:", erreur.getvalue())
+            self.assertIn("veyla:", erreur.getvalue())
             self.assertNotIn("Traceback", erreur.getvalue())
 
 
