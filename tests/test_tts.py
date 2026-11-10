@@ -154,6 +154,45 @@ class TestCliSay(unittest.TestCase):
         self.assertAlmostEqual(payload["duration_s"], 1.0, places=2)
         self.assertEqual(payload["sample_rate"], RATE)
 
+    def test_studio_par_defaut_avec_loudness_et_pic_reel(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "voix.wav"
+            code, sortie, _, _ = self._run(["say", "bonjour", "--out", str(path), "--json"])
+            payload = json.loads(sortie)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["style"], "studio")
+        self.assertAlmostEqual(payload["lufs"], -16.0, delta=0.7)
+        self.assertLessEqual(payload["true_peak_dbtp"], -1.0)
+
+    def test_cible_de_loudness_choisie(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "voix.wav"
+            code, sortie, _, _ = self._run(
+                ["say", "bonjour", "--out", str(path), "--json", "--loudness", "youtube"]
+            )
+            payload = json.loads(sortie)
+        self.assertEqual(code, 0)
+        self.assertAlmostEqual(payload["lufs"], -14.0, delta=0.5)
+        self.assertEqual(payload["loudness"], "youtube")
+
+    def test_export_48k_24_bits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "voix.wav"
+            code, sortie, erreur, _ = self._run(
+                ["say", "bonjour", "--out", str(path), "--json", "--rate", "48000",
+                 "--bits", "24"]
+            )
+            self.assertEqual(code, 0, erreur)
+            with wave.open(str(path)) as w:
+                self.assertEqual(w.getframerate(), 48000)
+                self.assertEqual(w.getsampwidth(), 3)
+                self.assertEqual(w.getnchannels(), 1)
+                duree = w.getnframes() / w.getframerate()
+            payload = json.loads(sortie)
+        self.assertAlmostEqual(duree, 1.0, delta=0.01)
+        self.assertEqual(payload["sample_rate"], 48000)
+        self.assertEqual(payload["bits"], 24)
+
     def test_texte_vide_code_deux(self):
         code, _, erreur, lectures = self._run(["say", "   "])
         self.assertEqual(code, 2)
@@ -391,3 +430,24 @@ class TestQwenCloneEngine(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDependanceCassee(unittest.TestCase):
+    def test_bibliotheque_native_absente_est_nommee(self):
+        import builtins
+        from unittest import mock
+
+        vrai_import = builtins.__import__
+
+        def faux_import(name, *args, **kwargs):
+            if name == "sherpa_onnx":
+                raise ImportError("libonnxruntime.so: cannot open shared object file")
+            return vrai_import(name, *args, **kwargs)
+
+        with mock.patch.object(builtins, "__import__", faux_import), self.assertRaises(
+            asr.MissingDependency
+        ) as ctx:
+            tts.PiperEngine().load()
+        message = str(ctx.exception)
+        self.assertIn("libonnxruntime.so", message)
+        self.assertIn("ne se charge pas", message)

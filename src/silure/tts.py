@@ -14,6 +14,7 @@ import array
 import hashlib
 import json
 import os
+import random
 import sys
 import wave
 from dataclasses import dataclass
@@ -117,6 +118,52 @@ def to_pcm16(samples) -> bytes:
     return out.tobytes()
 
 
+def export_wav(
+    path: str | os.PathLike[str],
+    pcm: bytes,
+    sample_rate: int,
+    out_rate: int | None = None,
+    bits: int = 16,
+) -> Path:
+    """Écrit le PCM 16 bits en WAV mono, à la fréquence et la profondeur demandées.
+
+    48 kHz / 24 bits est le format d'échange des logiciels de montage (MAO,
+    vidéo). Le rééchantillonnage est fait en flottant ; en 16 bits, un dither
+    TPDF masque l'erreur de quantification au lieu de la laisser en distorsion.
+    Ce que ça ne fait pas : ajouter de la précision. Le moteur rend du 16 bits ;
+    le 24 bits évite seulement une perte de plus dans la chaîne de montage.
+    """
+    if bits not in (16, 24):
+        raise SilureError(f"profondeur non prise en charge : {bits} bits (16 ou 24)")
+    rate = out_rate or sample_rate
+    if rate == sample_rate and bits == 16:
+        return write_wav(path, pcm, sample_rate)
+    from .master import resample, samples_of
+
+    values = resample(samples_of(pcm), sample_rate, rate)
+    if bits == 16:
+        rng = random.Random(0)  # reproductible : même entrée, même fichier
+        values = [x + rng.random() - rng.random() for x in values]
+        data = array.array("h", (max(-32768, min(32767, round(x))) for x in values)).tobytes()
+    else:
+        out = bytearray()
+        for x in values:
+            v = max(-8388608, min(8388607, round(x * 256)))
+            out += (v & 0xFFFFFF).to_bytes(3, "little")
+        data = bytes(out)
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with wave.open(str(target), "wb") as handle:
+        handle.setnchannels(1)
+        handle.setsampwidth(bits // 8)
+        handle.setframerate(rate)
+        handle.writeframes(data)
+    with wave.open(str(target)) as check:
+        if check.getframerate() != rate or check.getnframes() != len(values):
+            raise SilureError(f"{target} : en-tête incohérent après écriture")
+    return target
+
+
 def write_wav(path: str | os.PathLike[str], pcm: bytes, sample_rate: int) -> Path:
     """Écrit un WAV mono PCM 16 bits, puis relit l'en-tête pour le vérifier."""
     target = Path(path)
@@ -142,6 +189,8 @@ class Speech:
     engine: str
     style: str = "neutre"
     gain_db: float = 0.0
+    lufs: float = -70.0
+    true_peak_dbfs: float = -90.3
     provenance: dict[str, Any] | None = None
 
     @property
@@ -156,8 +205,10 @@ class Speech:
     def silent(self) -> bool:
         return self.peak <= SILENCE_PEAK
 
-    def save(self, path: str | os.PathLike[str]) -> Path:
-        return write_wav(path, self.pcm, self.sample_rate)
+    def save(
+        self, path: str | os.PathLike[str], rate: int | None = None, bits: int = 16
+    ) -> Path:
+        return export_wav(path, self.pcm, self.sample_rate, rate, bits)
 
 
 class Speaker:
@@ -166,7 +217,7 @@ class Speaker:
     def __init__(self, engine: TtsEngine) -> None:
         self.engine = engine
 
-    def say(self, text: str, style: str = "podcast") -> Speech:
+    def say(self, text: str, style: str = "studio", loudness: str = "podcast") -> Speech:
         clean = " ".join(text.split())
         if not clean:
             raise EmptyText("texte vide : donner une phrase à dire.")
@@ -183,7 +234,7 @@ class Speaker:
                 "aucun fichier écrit. Vérifier le modèle de synthèse."
             )
         try:
-            mastered = apply_master(pcm, rate, style)
+            mastered = apply_master(pcm, rate, style, loudness)
         except ValueError as exc:
             raise SilureError(str(exc)) from exc
         return Speech(
@@ -193,6 +244,8 @@ class Speaker:
             engine=self.engine.name,
             style=mastered.style,
             gain_db=mastered.gain_db,
+            lufs=mastered.lufs,
+            true_peak_dbfs=mastered.true_peak_dbfs,
         )
 
 
@@ -383,9 +436,16 @@ class PiperEngine:
             return
         try:
             import sherpa_onnx
-        except ImportError as exc:
+        except ModuleNotFoundError as exc:
             raise MissingDependency(
                 'sherpa-onnx n\'est pas installé. `uv pip install "silure[tts]"`.'
+            ) from exc
+        except ImportError as exc:
+            # Paquet présent mais bibliothèque native manquante (libonnxruntime,
+            # fournie par sherpa-onnx-core) : le dire, au lieu de « pas installé ».
+            raise MissingDependency(
+                f"sherpa-onnx est installé mais ne se charge pas : {exc}. "
+                'Réinstaller : `uv pip install -e ".[tts]"`.'
             ) from exc
 
         model, tokens, data = self._paths()
