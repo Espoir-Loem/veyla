@@ -3,15 +3,25 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
+import hashlib
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__
 from .asr import SilureError, Transcriber, VoskEngine
 from .master import STYLES
 from .players import play_file
-from .tts import EmptyText, PiperEngine, Speaker, wav_duration
+from .tts import (
+    EmptyText,
+    PiperEngine,
+    QwenCloneEngine,
+    Speaker,
+    load_consent,
+    wav_duration,
+)
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -49,6 +59,41 @@ def _build_parser() -> argparse.ArgumentParser:
         help="traitement audio (défaut : podcast)",
     )
     say.add_argument("--json", action="store_true", help="sortie JSON")
+
+    clone = sub.add_parser("clone", help="cloner une voix à partir d'un audio de référence")
+    clone.add_argument("texte", nargs="+", help="phrase à dire avec la voix clonée")
+    clone.add_argument(
+        "--out", default="clone.wav", help="fichier WAV de sortie (défaut : clone.wav)"
+    )
+    clone.add_argument(
+        "--model",
+        default=None,
+        help="répertoire du modèle Qwen3-TTS (défaut : models/ ou SILURE_CLONE_MODEL)",
+    )
+    clone.add_argument("--ref-audio", required=True, help="WAV de référence à cloner")
+    clone.add_argument(
+        "--ref-text",
+        default=None,
+        help="transcription de l'audio de référence (recommandé pour la fidélité)",
+    )
+    clone.add_argument(
+        "--consent",
+        required=True,
+        help="fichier JSON de preuve de consentement (§8)",
+    )
+    clone.add_argument(
+        "--play",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="lire l'audio après l'écriture (défaut : oui ; --no-play : écrire seulement)",
+    )
+    clone.add_argument(
+        "--style",
+        choices=STYLES,
+        default="podcast",
+        help="traitement audio (défaut : podcast)",
+    )
+    clone.add_argument("--json", action="store_true", help="sortie JSON")
 
     play = sub.add_parser("play", help="lire un fichier WAV existant")
     play.add_argument("audio", help="fichier WAV à lire")
@@ -144,6 +189,87 @@ def _say(args, tts_factory, player) -> int:
     return 0
 
 
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _clone(args, clone_factory, player) -> int:
+    try:
+        consent = load_consent(args.consent)
+    except SilureError as exc:
+        print(f"silure: {exc}", file=sys.stderr)
+        return 1
+
+    ref_path = Path(args.ref_audio)
+    if not ref_path.is_file():
+        print(f"silure: audio de référence introuvable : {ref_path}", file=sys.stderr)
+        return 1
+
+    engine = clone_factory(
+        args.model,
+        ref_audio=ref_path,
+        ref_text=args.ref_text,
+        consent=consent,
+    )
+    texte = " ".join(args.texte)
+    joue = None
+    try:
+        speech = Speaker(engine).say(texte, style=args.style)
+        provenance = {
+            "synthetic": True,
+            "engine": speech.engine,
+            "ref_audio": str(ref_path.resolve()),
+            "ref_audio_sha256": _sha256_file(ref_path),
+            "consent_file": str(Path(args.consent).resolve()),
+            "consent_sha256": consent.sha256,
+            "consent_subject": consent.subject,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        speech = dataclasses.replace(speech, provenance=provenance)
+        path = speech.save(args.out)
+        sidecar = path.with_name(path.stem + ".provenance.json")
+        sidecar.write_text(
+            json.dumps(provenance, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        if args.play:
+            joue = player(path)
+    except EmptyText as exc:
+        print(f"silure: {exc}", file=sys.stderr)
+        return 2
+    except SilureError as exc:
+        print(f"silure: {exc}", file=sys.stderr)
+        return 1
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "text": speech.text,
+                    "path": str(path),
+                    "provenance": str(sidecar),
+                    "duration_s": speech.duration_s,
+                    "sample_rate": speech.sample_rate,
+                    "peak": speech.peak,
+                    "engine": speech.engine,
+                    "style": speech.style,
+                    "gain_db": round(speech.gain_db, 1),
+                    "played": joue is not None,
+                    "player": joue,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    else:
+        lecture = f", lu avec {joue}" if joue else ""
+        style = f", style {speech.style}" if speech.style != "neutre" else ""
+        print(
+            f"{path} — {speech.duration_s:.2f} s, {speech.sample_rate} Hz, "
+            f"pic {speech.peak}/32768{style}{lecture} (provenance : {sidecar})"
+        )
+    return 0
+
+
 def _play(args, player) -> int:
     path = Path(args.audio)
     if not path.is_file():
@@ -179,11 +305,14 @@ def main(
     *,
     engine_factory=VoskEngine,
     tts_factory=PiperEngine,
+    clone_factory=QwenCloneEngine,
     player=None,
 ) -> int:
     args = _build_parser().parse_args(argv)
     if args.commande == "transcribe":
         return _transcribe(args, engine_factory)
+    if args.commande == "clone":
+        return _clone(args, clone_factory, player or play_file)
     if args.commande == "play":
         return _play(args, player or play_file)
     return _say(args, tts_factory, player or play_file)

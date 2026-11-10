@@ -121,6 +121,35 @@ Le modèle se cherche dans `models/vits-piper-fr_FR-siwis-medium`, puis dans
 `SILURE_TTS_MODEL`, puis dans `--model`. `import silure` expose
 `silure.Speaker(silure.PiperEngine()).say("bonjour").save("voix.wav")`.
 
+## Cloner une voix (optionnel)
+
+Le clonage zero-shot français utilise Qwen3-TTS (`Qwen/Qwen3-TTS-12Hz-0.6B-Base`,
+~2,3 Go). Il est **soumis à une preuve de consentement locale** (§8 de
+`docs/brand.md`) : sans elle, la capacité reste fermée.
+
+```bash
+uv pip install -e ".[clone]"
+mkdir -p models
+# le modèle se place dans models/Qwen3-TTS-12Hz-0.6B-Base (ou SILURE_CLONE_MODEL)
+
+printf '{"subject":"...","granted_by":"...","statement":"..."}' > consent.json
+.venv/bin/silure clone "Bonjour, ceci est ma voix clonée." \
+  --ref-audio prise.wav --ref-text "texte dit dans prise.wav" \
+  --consent consent.json --out clone.wav
+```
+
+Mesuré sur cette machine (6 cœurs, 6 Go de RAM, processeur seul) pour une phrase de
+50 caractères : **3,36 s d'audio à 24 000 Hz en 4 min 33 s** (chargement compris),
+**pic mémoire 2,73 Gio**, et le WAV relu par `silure transcribe` rend la phrase exacte.
+Le modèle est chargé en bfloat16, son format de stockage : en float32, le processus
+montait à 3,9 Go et se faisait tuer par le noyau. Sur une machine juste en mémoire,
+le confiner évite d'emporter le bureau avec lui :
+`systemd-run --user --scope -p MemoryMax=3G .venv/bin/silure clone ...`.
+
+Chaque sortie est accompagnée d'un fichier `clone.provenance.json` qui la marque
+comme synthétique et rattache la preuve de consentement. `import silure` expose
+`silure.QwenCloneEngine` et `silure.load_consent`.
+
 ## Vérifier que la machine de mesure fonctionne
 
 ```bash

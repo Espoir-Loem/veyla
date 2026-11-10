@@ -28,15 +28,32 @@ from .asr import (
     resample_pcm16,
     transcribe,
 )
-from .tts import EmptyText, PiperEngine, SilentSynthesis, Speaker, Speech, write_wav
+from .tts import (
+    ConsentProof,
+    EmptyText,
+    MissingConsent,
+    MissingReference,
+    PiperEngine,
+    QwenCloneEngine,
+    SilentSynthesis,
+    Speaker,
+    Speech,
+    load_consent,
+    resolve_clone_model_dir,
+    write_wav,
+)
 
 __version__ = "0.2.0"
 
 __all__ = [
+    "ConsentProof",
     "EmptyText",
+    "MissingConsent",
     "MissingDependency",
     "MissingModel",
+    "MissingReference",
     "PiperEngine",
+    "QwenCloneEngine",
     "SilentSynthesis",
     "SilureError",
     "Speaker",
@@ -45,8 +62,10 @@ __all__ = [
     "Transcriber",
     "UnsupportedAudio",
     "VoskEngine",
+    "load_consent",
     "peak_amplitude",
     "resample_pcm16",
+    "resolve_clone_model_dir",
     "transcribe",
     "write_wav",
     "__version__",

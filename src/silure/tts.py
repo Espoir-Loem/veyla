@@ -11,12 +11,14 @@ lève `SilentSynthesis` au lieu d'écrire un WAV de zéros que personne ne remar
 from __future__ import annotations
 
 import array
+import hashlib
+import json
 import os
 import sys
 import wave
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from .asr import (
     MissingDependency,
@@ -28,12 +30,18 @@ from .asr import (
 from .master import master as apply_master
 
 __all__ = [
+    "ConsentProof",
     "EmptyText",
+    "MissingConsent",
+    "MissingReference",
     "PiperEngine",
+    "QwenCloneEngine",
     "SilentSynthesis",
     "Speaker",
     "Speech",
     "TtsEngine",
+    "load_consent",
+    "resolve_clone_model_dir",
     "resolve_model_dir",
     "wav_duration",
     "to_pcm16",
@@ -46,6 +54,9 @@ MODEL_DOWNLOAD_HINT = (
     "vits-piper-fr_FR-siwis-medium.tar.bz2"
 )
 DEFAULT_MODEL_DIR = Path("models") / "vits-piper-fr_FR-siwis-medium"
+MODEL_VAR_ENV_CLONE = "SILURE_CLONE_MODEL"
+MODEL_DOWNLOAD_HINT_CLONE = "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base"
+DEFAULT_MODEL_DIR_CLONE = Path("models") / "Qwen3-TTS-12Hz-0.6B-Base"
 SILENCE_PEAK = 1
 """En dessous ou à ce niveau, un PCM 16 bits ne porte aucun son exploitable."""
 
@@ -56,6 +67,14 @@ class EmptyText(SilureError):
 
 class SilentSynthesis(SilureError):
     """Le moteur a rendu un signal muet : le fichier serait sans son."""
+
+
+class MissingConsent(SilureError):
+    """Aucune preuve de consentement pour le clonage : la capacité reste fermée."""
+
+
+class MissingReference(SilureError):
+    """Audio de référence absent ou illisible pour le clonage."""
 
 
 @runtime_checkable
@@ -123,6 +142,7 @@ class Speech:
     engine: str
     style: str = "neutre"
     gain_db: float = 0.0
+    provenance: dict[str, Any] | None = None
 
     @property
     def duration_s(self) -> float:
@@ -184,6 +204,161 @@ def resolve_model_dir(model_dir: str | os.PathLike[str] | None = None) -> Path:
     if from_env:
         return Path(from_env)
     return DEFAULT_MODEL_DIR
+
+
+@dataclass(frozen=True)
+class ConsentProof:
+    """Preuve locale de consentement pour le clonage (§8)."""
+
+    path: Path
+    sha256: str
+    subject: str
+    granted_by: str
+    statement: str
+
+
+def load_consent(path: str | os.PathLike[str] | None) -> ConsentProof:
+    """Lit et valide une preuve de consentement JSON. Lève `MissingConsent` sinon."""
+    if not path:
+        raise MissingConsent(
+            "consentement requis pour le clonage : fournir --consent <fichier.json>."
+        )
+    proof_path = Path(path)
+    if not proof_path.is_file():
+        raise MissingConsent(f"preuve de consentement introuvable : {proof_path}")
+    try:
+        raw = json.loads(proof_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise MissingConsent(
+            f"preuve de consentement illisible ({proof_path}) : {exc}"
+        ) from exc
+    if not isinstance(raw, dict):
+        raise MissingConsent("preuve de consentement : objet JSON attendu.")
+    required = ("subject", "granted_by", "statement")
+    values: dict[str, str] = {}
+    for key in required:
+        value = raw.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise MissingConsent(
+                f"preuve de consentement incomplète : champ '{key}' manquant ou vide."
+            )
+        values[key] = value.strip()
+    digest = hashlib.sha256(proof_path.read_bytes()).hexdigest()
+    return ConsentProof(
+        path=proof_path,
+        sha256=digest,
+        subject=values["subject"],
+        granted_by=values["granted_by"],
+        statement=values["statement"],
+    )
+
+
+def resolve_clone_model_dir(model_dir: str | os.PathLike[str] | None = None) -> Path:
+    """Ordre de résolution : argument, variable d'environnement, `models/` local."""
+    if model_dir:
+        return Path(model_dir)
+    from_env = os.environ.get(MODEL_VAR_ENV_CLONE)
+    if from_env:
+        return Path(from_env)
+    return DEFAULT_MODEL_DIR_CLONE
+
+
+class QwenCloneEngine:
+    """Clonage zero-shot français via Qwen3-TTS, sur le processeur.
+
+    La preuve de consentement est exigée pour charger le modèle : sans elle, la
+    capacité reste fermée (§8). L'audio de référence doit exister sur le disque.
+    """
+
+    name = "qwen-clone"
+
+    def __init__(
+        self,
+        model_dir: str | os.PathLike[str] | None = None,
+        ref_audio: str | os.PathLike[str] | None = None,
+        ref_text: str | None = None,
+        consent: ConsentProof | None = None,
+        device: str = "cpu",
+        dtype: str = "bfloat16",
+    ) -> None:
+        self.model_dir = resolve_clone_model_dir(model_dir)
+        self.ref_audio = Path(ref_audio) if ref_audio else None
+        self.ref_text = " ".join(ref_text.split()) if ref_text else None
+        self.consent = consent
+        self.device = device
+        self.dtype = dtype
+        self.sample_rate = 24_000
+        self._model = None
+
+    def _check_inputs(self) -> None:
+        if self.consent is None:
+            raise MissingConsent(
+                "consentement requis pour le clonage : fournir --consent <fichier.json>."
+            )
+        if self.ref_audio is None or not self.ref_audio.is_file():
+            raise MissingReference(
+                "audio de référence introuvable : "
+                + (str(self.ref_audio) if self.ref_audio else "(aucun)")
+                + ". Fournir --ref-audio <fichier.wav>."
+            )
+
+    def load(self) -> None:
+        if self._model is not None:
+            return
+        self._check_inputs()
+        try:
+            import qwen_tts  # noqa: F401
+        except ImportError as exc:
+            raise MissingDependency(
+                'qwen-tts n\'est pas installé. `uv pip install "silure[clone]"`.'
+            ) from exc
+
+        model_file = self.model_dir / "model.safetensors"
+        config_file = self.model_dir / "config.json"
+        missing = [p for p in (model_file, config_file) if not p.exists()]
+        if missing:
+            raise MissingModel(
+                "modèle de clonage absent : "
+                + ", ".join(str(p) for p in missing)
+                + f". Télécharger {MODEL_DOWNLOAD_HINT_CLONE} dans "
+                f"{self.model_dir}, ou indiquer --model / {MODEL_VAR_ENV_CLONE}."
+            )
+
+        import torch
+
+        self._model = qwen_tts.Qwen3TTSModel.from_pretrained(
+            str(self.model_dir),
+            device_map=self.device,
+            dtype=getattr(torch, self.dtype),
+        )
+        try:
+            sr = getattr(self._model, "sample_rate", None)
+            if sr:
+                self.sample_rate = int(sr)
+        except (TypeError, ValueError):
+            pass
+
+    def synthesize(self, text: str) -> bytes:
+        self.load()
+        # Sans transcription de la référence, Qwen refuse le mode ICL : on se
+        # rabat sur l'empreinte vocale seule (moins fidèle, mais pas d'échec).
+        try:
+            wavs, sr = self._model.generate_voice_clone(
+                text=text,
+                language="French",
+                ref_audio=str(self.ref_audio),
+                ref_text=self.ref_text,
+                x_vector_only_mode=self.ref_text is None,
+            )
+        except (ValueError, RuntimeError, OSError) as exc:
+            raise SilureError(f"échec du moteur de clonage : {exc}") from exc
+        if not wavs:
+            raise SilentSynthesis("le moteur de clonage n'a rendu aucun audio.")
+        self.sample_rate = int(sr) or self.sample_rate
+        return to_pcm16(wavs[0])
+
+    def close(self) -> None:
+        self._model = None
 
 
 class PiperEngine:

@@ -21,6 +21,7 @@ vosk = ["vosk>=0.3.45"]
 # sherpa-onnx 2.x ne compile plus le frontend espeak-ng : les modèles Piper ont
 # besoin de la 1.13 pour être phonémisés.
 tts = ["sherpa-onnx>=1.13,<2"]
+clone = ["qwen-tts>=0.1", "torch>=2.0", "soundfile>=0.12"]
 
 [project.scripts]
 silure = "silure.cli:main"

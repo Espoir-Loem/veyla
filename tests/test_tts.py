@@ -214,5 +214,180 @@ class TestIntegration(unittest.TestCase):
         self.assertTrue(result.text, "le fichier généré ne contient aucun mot reconnu")
 
 
+
+class TestConsent(unittest.TestCase):
+    def test_charge_une_preuve_valide(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "consent.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "subject": "Alice",
+                        "granted_by": "Alice",
+                        "statement": "J'accepte le clonage de ma voix.",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            proof = tts.load_consent(path)
+            self.assertEqual(proof.subject, "Alice")
+            self.assertEqual(proof.granted_by, "Alice")
+            self.assertEqual(len(proof.sha256), 64)
+
+    def test_refuse_un_champ_manquant(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "consent.json"
+            path.write_text(
+                json.dumps({"subject": "Alice", "granted_by": "Alice"}), encoding="utf-8"
+            )
+            with self.assertRaises(tts.MissingConsent):
+                tts.load_consent(path)
+
+    def test_refuse_fichier_absent(self):
+        with self.assertRaises(tts.MissingConsent):
+            tts.load_consent("/inexistant/consent.json")
+
+
+class TestCliClone(unittest.TestCase):
+    def _run(self, argv, clone_factory=None, player=None):
+        engine = ToneEngine()
+        lectures: list[Path] = []
+        sortie, erreur = io.StringIO(), io.StringIO()
+        with redirect_stdout(sortie), redirect_stderr(erreur):
+            code = cli.main(
+                argv,
+                clone_factory=clone_factory or (lambda *a, **k: engine),
+                player=player or (lambda p: lectures.append(Path(p)) or "fake"),
+            )
+        return code, sortie.getvalue(), erreur.getvalue(), lectures
+
+    def test_consent_absent_refuse(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ref = Path(tmp) / "ref.wav"
+            tts.write_wav(ref, tone(0.25), RATE)
+            code, _, erreur, _ = self._run(
+                [
+                    "clone",
+                    "bonjour",
+                    "--ref-audio",
+                    str(ref),
+                    "--consent",
+                    str(Path(tmp) / "nope.json"),
+                ]
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("consentement", erreur.lower())
+
+    def test_ref_audio_absent_refuse(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            consent = Path(tmp) / "consent.json"
+            consent.write_text(
+                json.dumps(
+                    {"subject": "A", "granted_by": "A", "statement": "ok"}
+                ),
+                encoding="utf-8",
+            )
+            code, _, erreur, _ = self._run(
+                [
+                    "clone",
+                    "bonjour",
+                    "--ref-audio",
+                    str(Path(tmp) / "nope.wav"),
+                    "--consent",
+                    str(consent),
+                ]
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("référence", erreur.lower())
+
+    def test_ecrit_le_fichier_et_la_provenance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ref = Path(tmp) / "ref.wav"
+            tts.write_wav(ref, tone(0.25), RATE)
+            consent = Path(tmp) / "consent.json"
+            consent.write_text(
+                json.dumps(
+                    {"subject": "A", "granted_by": "A", "statement": "ok"}
+                ),
+                encoding="utf-8",
+            )
+            out = Path(tmp) / "clone.wav"
+            code, sortie, erreur, lectures = self._run(
+                [
+                    "clone",
+                    "bonjour",
+                    "--out",
+                    str(out),
+                    "--ref-audio",
+                    str(ref),
+                    "--consent",
+                    str(consent),
+                    "--no-play",
+                ]
+            )
+            self.assertEqual(code, 0, erreur)
+            self.assertTrue(out.exists())
+            sidecar = out.with_name(out.stem + ".provenance.json")
+            self.assertTrue(sidecar.exists())
+            payload = json.loads(sidecar.read_text(encoding="utf-8"))
+            self.assertTrue(payload["synthetic"])
+            self.assertEqual(payload["consent_subject"], "A")
+            self.assertIn("provenance", sortie)
+
+
+class FakeQwenModel:
+    """Remplace `Qwen3TTSModel` : enregistre l'appel, rend une sinusoïde float."""
+
+    def __init__(self, error: Exception | None = None):
+        self.calls: list[dict] = []
+        self.error = error
+
+    def generate_voice_clone(self, **kwargs):
+        self.calls.append(kwargs)
+        if self.error:
+            raise self.error
+        rate = 24_000
+        wav = [0.5 * math.sin(2 * math.pi * 220 * i / rate) for i in range(rate)]
+        return [wav], rate
+
+
+class TestQwenCloneEngine(unittest.TestCase):
+    def _engine(self, model, ref_text=None):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        ref = Path(tmp.name) / "ref.wav"
+        ref.write_bytes(b"RIFF")
+        consent = tts.ConsentProof(
+            path=Path("c.json"), sha256="0" * 64, subject="A", granted_by="A", statement="ok"
+        )
+        engine = tts.QwenCloneEngine(ref_audio=ref, ref_text=ref_text, consent=consent)
+        engine._model = model
+        return engine
+
+    def test_sans_transcription_passe_en_mode_empreinte(self):
+        model = FakeQwenModel()
+        pcm = self._engine(model).synthesize("bonjour")
+        self.assertTrue(pcm)
+        self.assertTrue(model.calls[0]["x_vector_only_mode"])
+        self.assertEqual(self._engine(model).sample_rate, 24_000)
+
+    def test_avec_transcription_garde_le_mode_icl(self):
+        model = FakeQwenModel()
+        self._engine(model, ref_text="texte dit").synthesize("bonjour")
+        self.assertFalse(model.calls[0]["x_vector_only_mode"])
+        self.assertEqual(model.calls[0]["ref_text"], "texte dit")
+
+    def test_charge_en_bfloat16_par_defaut(self):
+        # Les poids sont stockés en BF16 : float32 doublerait la RAM (OOM à 3,9 Go
+        # sur une machine de 6 Go, mesuré le 2026-11-10).
+        self.assertEqual(tts.QwenCloneEngine().dtype, "bfloat16")
+
+    def test_erreur_du_moteur_devient_une_erreur_silure(self):
+        model = FakeQwenModel(error=ValueError("ref illisible"))
+        with self.assertRaises(asr.SilureError) as ctx:
+            self._engine(model).synthesize("bonjour")
+        self.assertIn("ref illisible", str(ctx.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

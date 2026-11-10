@@ -342,7 +342,7 @@ Ce document sert aussi à ça : interdire les bonnes idées qui arrivent au mauv
 | Protocole de corpus — jeux, conditions, règles d'exclusion | fait : `eval/CORPUS.md` |
 | Nom | tranché : **Silure**, sous réserve d'antériorité |
 | Périmètre v1 | tranché : **STT + TTS voix standard** (`silure transcribe`, `silure say`) ; clonage ouvert le 2026-11-10 sous conditions §8, non implémenté (§12) |
-| Clonage zero-shot français | non implémenté : ZipVoice (sherpa-onnx 1.13.8) ne couvre que zh/en ; Kokoro multi-lang testé et écarté (français non intelligible : « Bonjour » → « poche jours ») ; un modèle français exige un nouveau moteur (XTTS-v2, F5-TTS, OpenVoice) et une décision de licence |
+| Clonage zero-shot français | implémenté le 2026-11-10 avec Qwen3-TTS-12Hz-0.6B-Base (français), derrière `--consent` et un fichier de provenance marquant l'artefact comme synthétique : `src/silure/tts.py` (`QwenCloneEngine`), `silure clone`. Moteur lourd (~2,3 Go), dépendance optionnelle `silure[clone]` |
 | Synthèse locale — Piper `fr_FR-siwis-medium`, 67 Mo, sortie 22 050 Hz | fait le 2026-11-10 : `src/silure/tts.py`, 4,24 s d'audio pour 48 caractères (pic −7,3 dBFS), refus explicite d'un signal muet |
 | Lecture audio | fait le 2026-11-10 : `src/silure/players.py`, active par défaut (`winsound` Windows, `afplay` macOS, `pw-play`/`paplay`/`aplay`/`ffplay` Linux), échec explicite au lieu du silence |
 | Rendu audio — styles `podcast`, `clair`, `neutre` | fait le 2026-11-10 : `src/silure/master.py`, DSP sans dépendance (passe-haut, cloche, compression 2:1, crête −1 dBFS). Mesuré : RMS −19,0 → −16,2 dBFS, énergie > 3 kHz 2,6 → 3,8 %, même transcription. Ne change pas le timbre : ce n'est pas du clonage (§12) |
