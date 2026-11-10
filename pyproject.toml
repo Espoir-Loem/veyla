@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "silure"
+version = "0.2.0"
+description = "Reconnaissance et synthèse vocales exécutées sur l'appareil, sans serveur"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["asr", "speech-to-text", "tts", "text-to-speech", "on-device", "french"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Natural Language :: French",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+dependencies = []
+
+[project.optional-dependencies]
+vosk = ["vosk>=0.3.45"]
+# sherpa-onnx 2.x ne compile plus le frontend espeak-ng : les modèles Piper ont
+# besoin de la 1.13 pour être phonémisés.
+tts = ["sherpa-onnx>=1.13,<2"]
+
+[project.scripts]
+silure = "silure.cli:main"
+
+[dependency-groups]
+dev = ["ruff>=0.17"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
