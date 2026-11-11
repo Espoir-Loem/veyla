@@ -36,12 +36,17 @@ class FakeTools:
         self.downloads: list[str] = []
         self.conversions: list[tuple[Path, Path, float, float | None]] = []
         self.isolations: list[Path] = []
+        self.decodes: list[Path] = []
 
     def download(self, url: str, workdir: Path) -> Path:
         self.downloads.append(url)
         path = workdir / "telecharge.webm"
         path.write_bytes(b"video")
         return path
+
+    def decode(self, src: Path, dst: Path) -> None:
+        self.decodes.append(src)
+        dst.write_bytes(b"wav")
 
     def isolate(self, src: Path, workdir: Path) -> Path:
         self.isolations.append(src)
@@ -71,11 +76,12 @@ class TestPrepareReference(unittest.TestCase):
             downloader=self.tools.download,
             converter=self.tools.convert,
             isolator=self.tools.isolate,
+            decoder=self.tools.decode,
         )
 
     def test_isolation_avant_conversion_sur_la_source_brute(self):
         self._prepare("https://video.example/v", isolate=True)
-        self.assertEqual(self.tools.isolations[0].name, "telecharge.webm")
+        self.assertEqual(self.tools.isolations[0].name, "source.wav")
         self.assertEqual(self.tools.conversions[0][0].name, "vocals.wav")
 
     def test_wav_entier_isole_passe_par_la_conversion(self):
@@ -84,6 +90,19 @@ class TestPrepareReference(unittest.TestCase):
         ref = self._prepare(str(wav), isolate=True)
         self.assertEqual(len(self.tools.isolations), 1)
         self.assertNotEqual(ref.path, wav)
+
+    def test_source_non_wav_decodee_avant_separation(self):
+        # Demucs ne lit que le WAV sans ffmpeg système : une vidéo .webm est
+        # d'abord décodée par le ffmpeg embarqué.
+        self._prepare("https://video.example/v", isolate=True)
+        self.assertEqual(self.tools.decodes[0].name, "telecharge.webm")
+        self.assertEqual(self.tools.isolations[0].suffix, ".wav")
+
+    def test_wav_pas_redecode_avant_separation(self):
+        wav = self.dir / "prise.wav"
+        tts.write_wav(wav, tone(0.25), RATE)
+        self._prepare(str(wav), isolate=True)
+        self.assertEqual(self.tools.decodes, [])
 
     def test_sans_isolation_rien_n_est_separe(self):
         self._prepare("https://video.example/v")
@@ -162,6 +181,7 @@ class TestCliCloneUrl(unittest.TestCase):
                 downloader=tools.download,
                 converter=tools.convert,
                 isolator=tools.isolate,
+                decoder=tools.decode,
             )
 
         recu: dict = {}

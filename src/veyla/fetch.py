@@ -27,6 +27,7 @@ __all__ = [
     "convert_audio",
     "download_audio",
     "is_url",
+    "decode_audio",
     "isolate_voice",
     "prepare_reference",
 ]
@@ -110,6 +111,21 @@ def convert_audio(src: Path, dst: Path, start: float, duration: float | None) ->
         raise MissingReference(f"conversion impossible de {src} : {detail[0]}")
 
 
+def decode_audio(src: Path, dst: Path) -> None:
+    """Décode `src` (vidéo ou audio) en WAV pleine bande, sans filtre ni découpe.
+
+    Sert avant la séparation : Demucs ne lit que le WAV quand ffmpeg n'est pas
+    installé sur le système, et le ffmpeg embarqué (`imageio-ffmpeg`) ne porte pas
+    le nom `ffmpeg` qu'il cherche. La source garde sa fréquence et ses canaux.
+    """
+    command = [_ffmpeg(), "-nostdin", "-loglevel", "error", "-y", "-i", str(src)]
+    command += ["-vn", "-c:a", "pcm_s16le", str(dst)]
+    result = subprocess.run(command, capture_output=True, text=True)
+    if result.returncode != 0 or not dst.is_file():
+        detail = result.stderr.strip().splitlines()[-1:] or ["sans message"]
+        raise MissingReference(f"décodage impossible de {src} : {detail[0]}")
+
+
 def isolate_voice(src: Path, workdir: Path) -> Path:
     """Sépare la voix du reste (musique, ambiance) avec Demucs `htdemucs`.
 
@@ -145,6 +161,7 @@ def prepare_reference(
     downloader: Callable[[str, Path], Path] = download_audio,
     converter: Callable[[Path, Path, float, float | None], None] = convert_audio,
     isolator: Callable[[Path, Path], Path] = isolate_voice,
+    decoder: Callable[[Path, Path], None] = decode_audio,
 ) -> Reference:
     """Rend un WAV de référence à partir d'une URL, d'une vidéo ou d'un fichier audio.
 
@@ -161,6 +178,10 @@ def prepare_reference(
         if src.suffix.lower() == ".wav" and not start and not duration and not isolate:
             return Reference(path=src, source=source)
     if isolate:
+        if src.suffix.lower() != ".wav":
+            decoded = workdir / "source.wav"
+            decoder(src, decoded)
+            src = decoded
         src = isolator(src, workdir)
     dst = workdir / "reference.wav"
     converter(src, dst, start, duration)
